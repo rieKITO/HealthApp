@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Charts
 
 struct SleepHistoryView: View {
     
