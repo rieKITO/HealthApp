@@ -81,7 +81,7 @@ struct AlarmEditorView: View {
 
 // MARK: - Preview
 
-#Preview {
+#Preview("Light Mode") {
     
     struct Preview: View {
         
@@ -90,9 +90,30 @@ struct AlarmEditorView: View {
         
         @State
         private var alarm: Alarm? = DeveloperPreview.instance.alarm
-
+        
         var body: some View {
             AlarmEditorView(viewModel: viewModel, alarm: $alarm)
+        }
+        
+    }
+    
+    return Preview()
+    
+}
+
+#Preview("Dark Mode") {
+    
+    struct Preview: View {
+        
+        @State
+        private var viewModel = AlarmViewModel()
+        
+        @State
+        private var alarm: Alarm? = DeveloperPreview.instance.alarm
+        
+        var body: some View {
+            AlarmEditorView(viewModel: viewModel, alarm: $alarm)
+                .preferredColorScheme(.dark)
         }
         
     }

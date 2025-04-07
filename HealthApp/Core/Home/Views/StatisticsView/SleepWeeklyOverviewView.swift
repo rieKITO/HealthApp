@@ -51,7 +51,8 @@ struct SleepWeeklyOverviewView: View {
     
     struct Preview: View {
         
-        @State var viewModel: SleepHistoryViewModel = SleepHistoryViewModel()
+        @State
+        private var viewModel: SleepHistoryViewModel = SleepHistoryViewModel()
         
         var body: some View {
             SleepWeeklyOverviewView(viewModel: viewModel)
@@ -59,13 +60,15 @@ struct SleepWeeklyOverviewView: View {
     }
     
     return Preview()
+    
 }
 
 #Preview("Dark Mode") {
     
     struct Preview: View {
         
-        @State var viewModel: SleepHistoryViewModel = SleepHistoryViewModel()
+        @State
+        private var viewModel: SleepHistoryViewModel = SleepHistoryViewModel()
         
         var body: some View {
             SleepWeeklyOverviewView(viewModel: viewModel)
@@ -74,4 +77,5 @@ struct SleepWeeklyOverviewView: View {
     }
     
     return Preview()
+    
 }

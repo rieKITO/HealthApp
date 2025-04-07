@@ -115,7 +115,29 @@ struct BlurView: UIViewRepresentable {
 
 // MARK: - Preview
 
-#Preview {
+#Preview("Light Mode") {
+    
+    struct Preview: View {
+        
+        @State private var selectedTab: HomeTab = .sleep
+
+        var body: some View {
+            ZStack {
+                VStack {
+                    Spacer()
+                    CustomTabBarView(selectedTab: $selectedTab)
+                }
+                .ignoresSafeArea(edges: .bottom)
+            }
+        }
+        
+    }
+    
+    return Preview()
+    
+}
+
+#Preview("Dark Mode") {
     
     struct Preview: View {
         

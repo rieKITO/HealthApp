@@ -35,11 +35,11 @@ struct CircleButtonView: View {
     }
 }
 
-#Preview("Light Mode", traits: .sizeThatFitsLayout) {
+#Preview("Light Mode") {
     CircleButtonView(iconName: "info", shadowColor: .purple)
 }
 
-#Preview("Dark Mode", traits: .sizeThatFitsLayout) {
+#Preview("Dark Mode") {
     CircleButtonView(iconName: "info")
         .preferredColorScheme(.dark)
 }

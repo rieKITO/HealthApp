@@ -56,11 +56,34 @@ struct AlarmRowView: View {
 // MARK: - Preview
 
 #Preview("Light Mode") {
-    @Previewable @State var alarm = DeveloperPreview.instance.alarm
-    return AlarmRowView(alarm: $alarm)
+    
+    struct Preview: View {
+        
+        @State
+        private var alarm = DeveloperPreview.instance.alarm
+        
+        var body: some View {
+            AlarmRowView(alarm: $alarm)
+        }
+    }
+    
+    return Preview()
+    
 }
 
 #Preview("Dark Mode") {
-    @Previewable @State var alarm = DeveloperPreview.instance.alarm
-    return AlarmRowView(alarm: $alarm).preferredColorScheme(.dark)
+    
+    struct Preview: View {
+        
+        @State
+        private var alarm = DeveloperPreview.instance.alarm
+        
+        var body: some View {
+            AlarmRowView(alarm: $alarm)
+                .preferredColorScheme(.dark)
+        }
+    }
+    
+    return Preview()
+    
 }

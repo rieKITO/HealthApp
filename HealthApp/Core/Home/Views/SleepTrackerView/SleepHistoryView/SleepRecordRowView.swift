@@ -49,14 +49,34 @@ struct SleepRecordRowView: View {
 // MARK: - Preview
 
 #Preview("Light Mode") {
-    @Previewable @State
-    var sleepRecord = DeveloperPreview.instance.sleepRecord
-    SleepRecordRowView(record: sleepRecord)
+    
+    struct Preview: View {
+        
+        @State
+        private var sleepRecord = DeveloperPreview.instance.sleepRecord
+        
+        var body: some View {
+            SleepRecordRowView(record: sleepRecord)
+        }
+    }
+    
+    return Preview()
+    
 }
 
 #Preview("Dark Mode") {
-    @Previewable @State
-    var sleepRecord = DeveloperPreview.instance.sleepRecord
-    SleepRecordRowView(record: sleepRecord)
-        .preferredColorScheme(.dark)
+    
+    struct Preview: View {
+        
+        @State
+        private var sleepRecord = DeveloperPreview.instance.sleepRecord
+        
+        var body: some View {
+            SleepRecordRowView(record: sleepRecord)
+                .preferredColorScheme(.dark)
+        }
+    }
+    
+    return Preview()
+    
 }
