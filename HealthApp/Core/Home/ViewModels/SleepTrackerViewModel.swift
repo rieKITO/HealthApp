@@ -11,7 +11,9 @@ import Foundation
 class SleepTrackerViewModel {
     
     private let sleepFileManager = SleepFileManager.instance
+    
     var isSleeping = false
+    
     private var sleepStartTime: Date?
     
     var sleepRecords: [SleepData] {
