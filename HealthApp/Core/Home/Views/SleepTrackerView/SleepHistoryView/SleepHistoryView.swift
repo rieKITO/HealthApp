@@ -17,7 +17,7 @@ struct SleepHistoryView: View {
     // MARK: - State
     
     @State
-    private var viewModel = SleepHistoryViewModel()
+    private var viewModel = SleepTrackerViewModel()
     
     @State
     private var isShowingSleepRecordEditor: Bool = false

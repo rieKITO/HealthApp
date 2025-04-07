@@ -11,7 +11,7 @@ import Charts
 struct SleepWeeklyOverviewView: View {
     
     @Bindable
-    var viewModel: SleepHistoryViewModel
+    var viewModel: SleepTrackerViewModel
     
     // MARK: - Body
     
@@ -52,7 +52,7 @@ struct SleepWeeklyOverviewView: View {
     struct Preview: View {
         
         @State
-        private var viewModel: SleepHistoryViewModel = SleepHistoryViewModel()
+        private var viewModel = SleepTrackerViewModel()
         
         var body: some View {
             SleepWeeklyOverviewView(viewModel: viewModel)
@@ -68,7 +68,7 @@ struct SleepWeeklyOverviewView: View {
     struct Preview: View {
         
         @State
-        private var viewModel: SleepHistoryViewModel = SleepHistoryViewModel()
+        private var viewModel = SleepTrackerViewModel()
         
         var body: some View {
             SleepWeeklyOverviewView(viewModel: viewModel)

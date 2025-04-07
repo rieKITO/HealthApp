@@ -10,12 +10,12 @@ import SwiftUI
 struct StatisticsView: View {
     
     @State
-    var sleepHistoryViewModel = SleepHistoryViewModel()
+    var sleepViewModel = SleepTrackerViewModel()
     
     // MARK: - Body
     
     var body: some View {
-        SleepWeeklyOverviewView(viewModel: sleepHistoryViewModel)
+        SleepWeeklyOverviewView(viewModel: sleepViewModel)
     }
 }
 

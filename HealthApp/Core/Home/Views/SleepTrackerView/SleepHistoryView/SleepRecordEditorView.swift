@@ -8,11 +8,76 @@
 import SwiftUI
 
 struct SleepRecordEditorView: View {
+    
+    // MARK: - Environment
+    
+    @Environment(\.dismiss)
+    private var dismiss
+    
+    // MARK: - View Model
+    
+    @Bindable
+    var viewModel: SleepTrackerViewModel
+    
+    // MARK: - Binding
+    
+    @Binding
+    var record: SleepData?
+    
+    // MARK: - State
+    
+    @State
+    private var startSleepTime: Date = Date()
+    
+    @State
+    private var endSleepTime: Date = Date()
+    
+    // MARK: - Body
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        Text("")
     }
 }
 
-#Preview {
-    SleepRecordEditorView()
+// MARK: - Preview
+
+#Preview("Light Mode") {
+    
+    struct Preview: View {
+        
+        @State
+        private var viewModel = SleepTrackerViewModel()
+        
+        @State
+        private var record: SleepData? = DeveloperPreview.instance.sleepRecord
+        
+        var body: some View {
+            SleepRecordEditorView(viewModel: viewModel, record: $record)
+        }
+        
+    }
+    
+    return Preview()
+    
+}
+
+#Preview("Dark Mode") {
+    
+    struct Preview: View {
+        
+        @State
+        private var viewModel = SleepTrackerViewModel()
+        
+        @State
+        private var record: SleepData? = DeveloperPreview.instance.sleepRecord
+        
+        var body: some View {
+            SleepRecordEditorView(viewModel: viewModel, record: $record)
+                .preferredColorScheme(.dark)
+        }
+        
+    }
+    
+    return Preview()
+    
 }
