@@ -5,29 +5,33 @@
 //  Created by Александр Потёмкин on 31.03.2025.
 //
 
-//
-//  SleepTrackerViewModel.swift
-//  HealthApp
-//
-//  Created by Александр Потёмкин on 31.03.2025.
-//
-
 import Foundation
+import Combine
 
 @Observable
 class SleepTrackerViewModel {
     
-    private let sleepFileManager = LocalFileManager.instance
+    private let sleepFileManager = SleepDataService()
     
-    private let folderName = "SleepData"
-    private let fileName = "SleepData.json"
-    
-    var isSleeping = false
+    private var cancellables = Set<AnyCancellable>()
     
     private var sleepStartTime: Date?
     
-    var sleepRecords: [SleepData] {
-        sleepFileManager.loadSleepRecords(folderName: folderName, fileName: fileName)
+    var isSleeping = false
+
+    var sleepRecords: [SleepData] = []
+
+    init() {
+        addSubscribers()
+    }
+    
+    private func addSubscribers() {
+        sleepFileManager.$allSleepRecords
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] newRecords in
+                self?.sleepRecords = newRecords
+            }
+            .store(in: &cancellables)
     }
     
     func startSleep() {
@@ -40,9 +44,7 @@ class SleepTrackerViewModel {
         guard isSleeping, let startTime = sleepStartTime else { return }
         isSleeping = false
         let record = SleepData(startTime: startTime, endTime: Date())
-        var records = sleepRecords
-        records.append(record)
-        sleepFileManager.saveSleepRecords(records: records, folderName: folderName, fileName: fileName)
+        sleepFileManager.addSleepRecord(record)
     }
     
     func getDailySleep() -> TimeInterval {
@@ -89,5 +91,4 @@ class SleepTrackerViewModel {
             return (date, totalHours)
         }
     }
-    
 }

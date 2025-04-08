@@ -8,13 +8,15 @@
 import Foundation
 import Combine
 
-@Observable
 class SleepDataService {
 
     private let fileManager = LocalFileManager.instance
+    
     private let folderName = "SleepData"
+    
     private let fileName = "SleepData.json"
-
+    
+    @Published
     var allSleepRecords: [SleepData] = []
 
     init() {
@@ -27,6 +29,7 @@ class SleepDataService {
 
     func saveSleepRecords(_ records: [SleepData]) {
         fileManager.saveSleepRecords(records: records, folderName: folderName, fileName: fileName)
+        allSleepRecords = records
     }
 
     func clearSleepData() {
