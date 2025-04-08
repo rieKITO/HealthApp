@@ -33,7 +33,7 @@ class AlarmViewModel {
         }
     }
     
-    func addAlarm(_ alarm: Alarm) {
+    func addAlarm(alarm: Alarm) {
         alarms.append(alarm)
         saveAlarms()
     }
@@ -57,7 +57,7 @@ class AlarmViewModel {
             alarmToReturn = alarm
         } else {
             let newAlarm = Alarm(time: time, isEnabled: true, description: description, repeatDays: Array(repeatDays))
-            addAlarm(newAlarm)
+            addAlarm(alarm: newAlarm)
             alarmToReturn = newAlarm
         }
 
