@@ -11,7 +11,7 @@ import Combine
 @Observable
 class SleepTrackerViewModel {
     
-    private let sleepFileManager = SleepDataService()
+    private let sleepDataService = SleepDataService()
     
     private var cancellables = Set<AnyCancellable>()
     
@@ -26,7 +26,7 @@ class SleepTrackerViewModel {
     }
     
     private func addSubscribers() {
-        sleepFileManager.$allSleepRecords
+        sleepDataService.$allSleepRecords
             .receive(on: DispatchQueue.main)
             .sink { [weak self] newRecords in
                 self?.sleepRecords = newRecords
@@ -44,7 +44,38 @@ class SleepTrackerViewModel {
         guard isSleeping, let startTime = sleepStartTime else { return }
         isSleeping = false
         let record = SleepData(startTime: startTime, endTime: Date())
-        sleepFileManager.addSleepRecord(record)
+        sleepDataService.addSleepRecord(record)
+    }
+    
+    func getSleepRecordValues(from sleepRecord: SleepData?) -> (startTime: Date, endTime: Date?) {
+        guard let sleepRecord = sleepRecord else {
+            return (Date(), Date())
+        }
+        return (sleepRecord.startTime, sleepRecord.endTime)
+    }
+    
+    private func updateSleepRecord(updatedRecord: SleepData) {
+        if let index = sleepRecords.firstIndex(where: { $0.id == updatedRecord.id }) {
+            sleepRecords[index] = updatedRecord
+            sleepDataService.saveSleepRecords(sleepRecords)
+        }
+    }
+    
+    func createOrUpdateSleepRecord(existingSleepRecord: SleepData?, startTime: Date, endTime: Date) -> SleepData {
+        var sleepRecordToReturn: SleepData
+
+        if var sleepRecord = existingSleepRecord {
+            sleepRecord.startTime = startTime
+            sleepRecord.endTime = endTime
+            updateSleepRecord(updatedRecord: sleepRecord)
+            sleepRecordToReturn = sleepRecord
+        } else {
+            let newSleepRecord = SleepData(startTime: startTime, endTime: endTime)
+            sleepDataService.addSleepRecord(newSleepRecord)
+            sleepRecordToReturn = newSleepRecord
+        }
+
+        return sleepRecordToReturn
     }
     
     func getDailySleep() -> TimeInterval {

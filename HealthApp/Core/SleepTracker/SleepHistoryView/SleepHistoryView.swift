@@ -34,6 +34,9 @@ struct SleepHistoryView: View {
             SleepWeeklyOverviewView(viewModel: viewModel)
             sleepRecordsView
         }
+        .sheet(isPresented: $isShowingSleepRecordEditor) {
+            SleepRecordEditorView(viewModel: viewModel, record: $selectedRecord)
+        }
     }
 }
 
