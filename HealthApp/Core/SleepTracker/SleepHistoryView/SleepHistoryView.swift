@@ -34,6 +34,9 @@ struct SleepHistoryView: View {
             SleepWeeklyOverviewView(viewModel: viewModel)
             sleepRecordsView
         }
+        .safeAreaInset(edge: .bottom, alignment: .center) {
+            addSleepRecordButton
+        }
         .sheet(isPresented: $isShowingSleepRecordEditor) {
             SleepRecordEditorView(viewModel: viewModel, record: $selectedRecord)
         }
@@ -82,6 +85,23 @@ private extension SleepHistoryView {
             
         }
         .padding()
+    }
+    
+    private var addSleepRecordButton: some View {
+        Button {
+            selectedRecord = nil
+            isShowingSleepRecordEditor = true
+        } label: {
+            Image(systemName: "plus")
+                .font(.title2)
+                .foregroundStyle(Color.white)
+                .padding()
+                .background(
+                    Circle()
+                        .fill(Color.theme.accentBlue)
+                        .shadow(color: Color.theme.accentBlue.opacity(0.7), radius: 10)
+                )
+        }
     }
     
 }
