@@ -8,10 +8,24 @@
 import SwiftUI
 import Charts
 
+struct AnimatedSleepEntry: Identifiable {
+    let id = UUID()
+    let date: Date
+    let targetHours: Double
+    var animatedHours: Double
+}
+
 struct SleepWeeklyOverviewView: View {
+    
+    // MARK: View Model
     
     @Bindable
     var viewModel: SleepTrackerViewModel
+    
+    // MARK: - State
+    
+    @State
+    private var animatedEntries: [AnimatedSleepEntry] = []
     
     // MARK: - Body
     
@@ -22,10 +36,10 @@ struct SleepWeeklyOverviewView: View {
                 .bold()
                 .foregroundStyle(Color.theme.accentBlue)
             Chart {
-                ForEach(viewModel.last7DaysSleep(), id: \.date) { entry in
+                ForEach(animatedEntries) { entry in
                     BarMark(
                         x: .value("Date", entry.date, unit: .day),
-                        y: .value("Hours", entry.hours)
+                        y: .value("Hours", entry.animatedHours)
                     )
                     .foregroundStyle(Color.theme.accentBlue)
                 }
@@ -42,7 +56,38 @@ struct SleepWeeklyOverviewView: View {
             .padding(.top, 5)
         }
         .padding()
+        .onAppear {
+            setupAnimatedEntries()
+            animateBars()
+        }
+        .onChange(of: viewModel.sleepRecords) {
+            setupAnimatedEntries()
+            animateBars()
+        }
     }
+}
+
+// MARK: - Setup
+
+private extension SleepWeeklyOverviewView {
+    
+    func setupAnimatedEntries() {
+        let realEntries = viewModel.last7DaysSleep()
+        animatedEntries = realEntries.map {
+            AnimatedSleepEntry(date: $0.date, targetHours: $0.hours, animatedHours: 0)
+        }
+    }
+
+    func animateBars() {
+        for index in animatedEntries.indices {
+            DispatchQueue.main.asyncAfter(deadline: .now() + Double(index) * 0.1) {
+                withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
+                    animatedEntries[index].animatedHours = animatedEntries[index].targetHours
+                }
+            }
+        }
+    }
+    
 }
 
 // MARK: - Preview

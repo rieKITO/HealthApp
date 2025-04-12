@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct SleepData: Identifiable, Codable {
+struct SleepData: Identifiable, Codable, Equatable {
     var id = UUID()
     var startTime: Date
     var endTime: Date?
