@@ -64,13 +64,6 @@ struct SleepRecordEditorView: View {
                 )
                 dismiss()
             })
-            .onAppear {
-                print(record?.startTime ?? Date())
-                print(record?.endTime ?? Date())
-                let values = viewModel.getSleepRecordValues(from: record)
-                startSleepTime = values.startTime
-                endSleepTime = values.endTime ?? Date()
-            }
         }
     }
 }
