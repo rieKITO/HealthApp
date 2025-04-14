@@ -13,7 +13,6 @@ struct TodaySleepSummaryView: View {
     
     @Bindable
     var viewModel: SleepTrackerViewModel
-
     
     // MARK: - Properties
 
@@ -34,13 +33,12 @@ struct TodaySleepSummaryView: View {
     }
     
     private var progressColor: Color {
-        let halfTargetSleepInHours = targetSleepInHours / 2
-        if dailySleepDurationInHours < targetSleepInHours - halfTargetSleepInHours {
+        if dailySleepDurationInHours < targetSleepInHours - 2 {
             return .red
-        } else if dailySleepDurationInHours > targetSleepInHours - halfTargetSleepInHours && dailySleepDurationInHours < targetSleepInHours {
+        } else if dailySleepDurationInHours > targetSleepInHours + 1 {
             return .orange
         } else {
-            return Color.theme.accentBlue
+            return Color.theme.accentGreen
         }
     }
 
@@ -86,7 +84,6 @@ struct TodaySleepSummaryView: View {
             }
             .frame(height: 8)
             .padding(.top, 4)
-
             HStack {
                 Text("0h")
                 Spacer()
