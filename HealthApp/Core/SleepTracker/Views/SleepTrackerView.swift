@@ -18,11 +18,13 @@ struct SleepTrackerView: View {
     
     var body: some View {
         VStack {
+            TodaySleepSummaryView(viewModel: viewModel)
+                .padding(.top)
             sleepTimingLabel
                 .padding()
             HStack(spacing: 20) {
                 NavigationLink {
-                    SleepHistoryView()
+                    SleepHistoryView(viewModel: viewModel)
                         .navigationBarBackButtonHidden(true)
                 } label: {
                     sleepHistoryViewLabel
@@ -78,36 +80,6 @@ private extension SleepTrackerView {
             }
     }
     
-//    private var sleepStatisticsLabel: some View {
-//        RoundedRectangle(cornerRadius: 10)
-//            .stroke(Color.theme.accent.opacity(0.5), lineWidth: 2)
-//            .fill(Color.theme.background)
-//            .frame(maxWidth: .infinity)
-//            .frame(height: 180)
-//            .overlay(alignment: .leading) {
-//                VStack(alignment: .leading) {
-//                    HStack {
-//                        Image(systemName: "chart.bar")
-//                            .font(.title2)
-//                            .frame(width: 30, height: 30)
-//                        Text("Sleep Stats")
-//                            .font(.headline)
-//                        Spacer()
-//                    }
-//                    .foregroundStyle(Color.theme.accentBlue)
-//                    Text("Check your sleep statistics")
-//                        .multilineTextAlignment(.leading)
-//                        .foregroundStyle(Color.theme.secondaryText)
-//                    Spacer()
-//                    Text("\(DateFormatterHelper.formatDuration(viewModel.getDailySleep()))")
-//                        .font(.headline)
-//                    Text("Today")
-//                        .foregroundStyle(Color.theme.secondaryText)
-//                }
-//                .padding(10)
-//            }
-//    }
-    
     private var alarmsViewLabel: some View {
         RoundedRectangle(cornerRadius: 10)
             .stroke(Color.theme.accent.opacity(0.5), lineWidth: 2)
@@ -159,7 +131,7 @@ private extension SleepTrackerView {
                         .multilineTextAlignment(.leading)
                         .foregroundStyle(Color.theme.secondaryText)
                     Spacer()
-                    Text("\(DateFormatterHelper.formatDuration(viewModel.getWeeklySleep()))")
+                    Text("\(DateFormatterHelper.formatDuration(viewModel.getWeeklySleepTimeInterval()))")
                         .font(.headline)
                     Text("This week")
                         .foregroundStyle(Color.theme.secondaryText)

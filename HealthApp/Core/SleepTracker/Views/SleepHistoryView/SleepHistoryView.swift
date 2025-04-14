@@ -16,8 +16,8 @@ struct SleepHistoryView: View {
     
     // MARK: - State
     
-    @State
-    private var viewModel = SleepTrackerViewModel()
+    @Bindable
+    var viewModel: SleepTrackerViewModel
     
     @State
     private var isShowingSleepRecordEditor: Bool = false
@@ -109,10 +109,34 @@ private extension SleepHistoryView {
 // MARK: - Preview
 
 #Preview("Light Mode") {
-    SleepHistoryView()
+    
+    struct Preview: View {
+        
+        @State
+        private var viewModel = SleepTrackerViewModel()
+        
+        var body: some View {
+            SleepHistoryView(viewModel: viewModel)
+        }
+    }
+    
+    return Preview()
+    
 }
 
 #Preview("Dark Mode") {
-    SleepHistoryView()
-        .preferredColorScheme(.dark)
+    
+    struct Preview: View {
+        
+        @State
+        private var viewModel = SleepTrackerViewModel()
+        
+        var body: some View {
+            SleepHistoryView(viewModel: viewModel)
+                .preferredColorScheme(.dark)
+        }
+    }
+    
+    return Preview()
+    
 }

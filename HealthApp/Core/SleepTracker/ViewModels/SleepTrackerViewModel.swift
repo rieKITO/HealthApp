@@ -78,15 +78,15 @@ class SleepTrackerViewModel {
         return sleepRecordToReturn
     }
     
-    func getDailySleep() -> TimeInterval {
+    func getDailySleepTimeInterval() -> TimeInterval {
         getTotalSleep(for: 1)
     }
     
-    func getWeeklySleep() -> TimeInterval {
+    func getWeeklySleepTimeInterval() -> TimeInterval {
         getTotalSleep(for: 7)
     }
     
-    func getMonthlySleep() -> TimeInterval {
+    func getMonthlySleepTimeInterval() -> TimeInterval {
         getTotalSleep(for: 30)
     }
     
