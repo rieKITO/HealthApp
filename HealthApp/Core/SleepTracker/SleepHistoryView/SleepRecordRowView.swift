@@ -20,7 +20,7 @@ struct SleepRecordRowView: View {
                 .frame(width: 40, height: 40)
                 .background(Circle().fill(Color.theme.mutedBlue))
             VStack(alignment: .leading) {
-                Text(DateFormatterHelper.formatDate(record.startTime))
+                Text(DateFormatterHelper.formatDate(record.endTime ?? Date()))
                     .font(.headline)
                 Text("\(DateFormatterHelper.formatTime(record.startTime)) - \(DateFormatterHelper.formatTime(record.endTime ?? record.startTime.addingTimeInterval(8 * 3600)))")
                     .font(.subheadline)
