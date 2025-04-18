@@ -15,7 +15,7 @@ class LocalFileManager {
     
     // MARK: - Public Methods
 
-    func saveSleepRecords(records: [SleepData], folderName: String, fileName: String) {
+    func saveData<T: Codable>(records: [T], folderName: String, fileName: String) {
         createFolderIfNeeded(folderName: folderName)
 
         guard let url = getURLForFile(fileName: fileName, folderName: folderName) else {
@@ -27,11 +27,11 @@ class LocalFileManager {
             let data = try JSONEncoder().encode(records)
             try data.write(to: url, options: .atomic)
         } catch {
-            print("Error saving sleep records. FileName: \(fileName). \(error.localizedDescription)")
+            print("Error saving records. FileName: \(fileName). \(error.localizedDescription)")
         }
     }
 
-    func loadSleepRecords(folderName: String, fileName: String) -> [SleepData] {
+    func loadData<T: Codable>(folderName: String, fileName: String) -> [T] {
         guard let url = getURLForFile(fileName: fileName, folderName: folderName),
               FileManager.default.fileExists(atPath: url.path) else {
             return []
@@ -39,14 +39,14 @@ class LocalFileManager {
 
         do {
             let data = try Data(contentsOf: url)
-            return try JSONDecoder().decode([SleepData].self, from: data)
+            return try JSONDecoder().decode([T].self, from: data)
         } catch {
-            print("Error loading sleep records. FileName: \(fileName). \(error.localizedDescription)")
+            print("Error loading records. FileName: \(fileName). \(error.localizedDescription)")
             return []
         }
     }
 
-    func clearSleepData(folderName: String, fileName: String) {
+    func clearData(folderName: String, fileName: String) {
         guard let url = getURLForFile(fileName: fileName, folderName: folderName) else {
             print("Error: Unable to get URL for file.")
             return
@@ -55,9 +55,10 @@ class LocalFileManager {
         do {
             try FileManager.default.removeItem(at: url)
         } catch {
-            print("Error clearing sleep data. FileName: \(fileName). \(error.localizedDescription)")
+            print("Error clearing data. FileName: \(fileName). \(error.localizedDescription)")
         }
     }
+
 
     // MARK: - Private Methods
     

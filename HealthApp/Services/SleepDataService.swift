@@ -24,16 +24,16 @@ class SleepDataService {
     }
 
     private func loadSleepRecords() {
-        allSleepRecords = fileManager.loadSleepRecords(folderName: folderName, fileName: fileName)
+        allSleepRecords = fileManager.loadData(folderName: folderName, fileName: fileName)
     }
 
     func saveSleepRecords(_ records: [SleepData]) {
-        fileManager.saveSleepRecords(records: records, folderName: folderName, fileName: fileName)
+        fileManager.saveData(records: records, folderName: folderName, fileName: fileName)
         allSleepRecords = records
     }
 
     func clearSleepData() {
-        fileManager.clearSleepData(folderName: folderName, fileName: fileName)
+        fileManager.clearData(folderName: folderName, fileName: fileName)
         allSleepRecords = []
     }
 

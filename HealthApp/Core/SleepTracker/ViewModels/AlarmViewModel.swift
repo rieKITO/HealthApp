@@ -6,45 +6,38 @@
 //
 
 import Foundation
+import Combine
 import SwiftUI
 
 @Observable
 class AlarmViewModel {
+
+    private let alarmService = AlarmService()
     
+    private var cancellables = Set<AnyCancellable>()
+
     var alarms: [Alarm] = []
-    
+
     init() {
-        loadAlarms()
+        addSubscribers()
     }
-    
-    func loadAlarms() {
-        if let savedData = UserDefaults.standard.data(forKey: "alarms") {
-            let decoder = JSONDecoder()
-            if let decodedAlarms = try? decoder.decode([Alarm].self, from: savedData) {
-                self.alarms = decodedAlarms
+
+    private func addSubscribers() {
+        alarmService.$allAlarms
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] newAlarms in
+                self?.alarms = newAlarms
             }
-        }
+            .store(in: &cancellables)
     }
-    
-    func saveAlarms() {
-        let encoder = JSONEncoder()
-        if let encodedData = try? encoder.encode(alarms) {
-            UserDefaults.standard.set(encodedData, forKey: "alarms")
-        }
-    }
-    
-    func addAlarm(alarm: Alarm) {
-        alarms.append(alarm)
-        saveAlarms()
-    }
-    
+
     private func updateAlarm(updatedAlarm: Alarm) {
         if let index = alarms.firstIndex(where: { $0.id == updatedAlarm.id }) {
             alarms[index] = updatedAlarm
-            saveAlarms()
+            alarmService.saveAlarms(alarms)
         }
     }
-    
+
     func createOrUpdateAlarm(existingAlarm: Alarm?, time: Date, description: String, repeatDays: Set<Weekday>) -> Alarm {
         var alarmToReturn: Alarm
 
@@ -57,7 +50,7 @@ class AlarmViewModel {
             alarmToReturn = alarm
         } else {
             let newAlarm = Alarm(time: time, isEnabled: true, description: description, repeatDays: Array(repeatDays))
-            addAlarm(alarm: newAlarm)
+            alarmService.addAlarm(newAlarm)
             alarmToReturn = newAlarm
         }
 
@@ -72,9 +65,6 @@ class AlarmViewModel {
     }
 
     func deleteAlarm(alarm: Alarm) {
-        alarms.removeAll { $0.id == alarm.id }
-        saveAlarms()
+        alarmService.deleteAlarm(alarm: alarm)
     }
-    
 }
-
