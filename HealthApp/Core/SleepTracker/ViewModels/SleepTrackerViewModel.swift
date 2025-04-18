@@ -121,13 +121,21 @@ class SleepTrackerViewModel {
     
     func last7DaysSleep() -> [(date: Date, hours: Double)] {
         let calendar = Calendar.current
-        let last7Days = (0..<7).compactMap { calendar.date(byAdding: .day, value: -$0, to: Date()) }
+        let today = calendar.startOfDay(for: Date())
+        let last7Days = (0..<7).compactMap { calendar.date(byAdding: .day, value: -$0, to: today) }
+
         return last7Days.map { date in
             let totalHours = sleepRecords
-                .filter { calendar.isDate($0.startTime, inSameDayAs: date) }
+                .filter {
+                    if let end = $0.endTime {
+                        return calendar.isDate(end, inSameDayAs: date)
+                    }
+                    return false
+                }
                 .compactMap { $0.duration }
                 .reduce(0, +) / 3600
             return (date, totalHours)
         }
     }
+
 }
