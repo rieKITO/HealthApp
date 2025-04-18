@@ -91,9 +91,17 @@ class SleepTrackerViewModel {
     }
     
     private func getTotalSleep(for days: Int) -> TimeInterval {
-        let startDate = Calendar.current.date(byAdding: .day, value: -days, to: Date()) ?? Date()
+        let calendar = Calendar.current
+        let now = Date()
+        let startDate = calendar.date(byAdding: .day, value: -days + 1, to: calendar.startOfDay(for: now)) ?? now
+
         return sleepRecords
-            .filter { $0.startTime >= startDate }
+            .filter { record in
+                if let end = record.endTime {
+                    return end >= startDate && end <= now
+                }
+                return false
+            }
             .compactMap { $0.duration }
             .reduce(0, +)
     }
