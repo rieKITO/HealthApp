@@ -82,7 +82,6 @@ private extension SleepHistoryView {
                         selectedRecord = record
                     }
             }
-            
         }
         .padding()
     }
