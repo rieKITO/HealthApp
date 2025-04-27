@@ -13,9 +13,12 @@ struct CircleButtonView: View {
     
     let shadowColor: Color?
     
-    init(iconName: String, shadowColor: Color? = nil) {
+    let circleColor: Color?
+    
+    init(iconName: String, shadowColor: Color? = nil, circleColor: Color? = nil) {
         self.iconName = iconName
         self.shadowColor = shadowColor
+        self.circleColor = circleColor
     }
     
     var body: some View {
@@ -24,7 +27,7 @@ struct CircleButtonView: View {
             .frame(width: 50, height: 50)
             .background(
                 Circle()
-                    .foregroundStyle(Color.theme.background)
+                    .foregroundStyle(circleColor ?? Color.theme.background)
             )
             .shadow(
                 color: (shadowColor ?? Color.theme.accent).opacity(0.40),
