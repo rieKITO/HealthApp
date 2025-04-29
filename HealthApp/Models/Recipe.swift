@@ -10,22 +10,16 @@ import Foundation
 struct Recipe: Identifiable, Codable {
     let id: Int
     let title: String
-    let image: String
-    let nutrition: Nutrition?
-
-    struct Nutrition: Codable {
-        let nutrients: [Nutrient]
-    }
-
-    struct Nutrient: Codable {
-        let name: String
-        let amount: Double
-        let unit: String
-    }
-
+    let calories: Double
+    let protein: Double
+    let fat: Double
+    let carbs: Double
+    
     var caloriesText: String {
-        nutrition?.nutrients.first(where: { $0.name == "Calories" }).map {
-            "\($0.amount.rounded()) \($0.unit)"
-        } ?? "N/A"
+        String(format: "%.0f cal", calories)
+    }
+    
+    var macrosText: String {
+        "P: \(String(format: "%.0f", protein)) g F: \(String(format: "%.0f", fat)) g С: \(String(format: "%.0f", carbs)) g"
     }
 }

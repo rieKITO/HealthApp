@@ -18,20 +18,25 @@ struct NutritionTrackerView: View {
 
     var body: some View {
         VStack {
-            HStack {
-                NavigationLink {
-                    
-                } label: {
-                    mealPlannerLabel
+            NavigationStack {
+                HStack {
+                    NavigationLink {
+                        MealPlannerView()
+                            .navigationBarBackButtonHidden(true)
+                    } label: {
+                        mealPlannerLabel
+                    }
+                    NavigationLink {
+                        
+                    } label: {
+                        waterPlannerLabel
+                    }
                 }
-                NavigationLink {
-                    
-                } label: {
-                    waterPlannerLabel
-                }
+                .padding(.horizontal)
             }
-            .padding(.horizontal)
         }
+        .padding(.top)
+        .environment(viewModel)
     }
 }
 

@@ -102,8 +102,8 @@ private extension HomeView {
     NavigationStack {
         HomeView()
             .toolbar(.hidden)
-            .preferredColorScheme(.light)
     }
+    .environment(DeveloperPreview.instance.nutritionViewModel)
 }
 
 #Preview("Dark Mode") {
@@ -112,4 +112,5 @@ private extension HomeView {
             .toolbar(.hidden)
             .preferredColorScheme(.dark)
     }
+    .environment(DeveloperPreview.instance.nutritionViewModel)
 }

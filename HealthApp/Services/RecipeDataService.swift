@@ -24,9 +24,9 @@ class RecipeDataService {
     
     private var currentOffset = 0
     
-    private let pageSize = 100
+    private let pageSize = 10
     
-    private let totalLimit = 500
+    private let totalLimit = 5
     
     // MARK: - Init
 
@@ -55,11 +55,12 @@ class RecipeDataService {
     // MARK: - Private Methods
 
     private func fetchRecipes(offset: Int) {
-        let apiKey = Bundle.main.infoDictionary?["SpoonacularAPIKey"] as? String ?? ""
-
-        let urlString =
-        "https://api.spoonacular.com/recipes/complexSearch?offset=\(offset)&number=\(pageSize)&addRecipeNutrition=true&apiKey=\(apiKey)"
-
+        let apiKey = Secrets.spoonacularAPIKey
+        
+        let urlString = """
+        https://api.spoonacular.com/recipes/complexSearch?offset=\(offset)&number=\(pageSize)&addRecipeNutrition=true&apiKey=\(apiKey)
+        """
+        
         guard let url = URL(string: urlString) else {
             isLoading = false
             return
@@ -67,33 +68,75 @@ class RecipeDataService {
 
         recipeSubscription = NetworkingManager.download(url: url)
             .tryMap { data -> Data in
-                print("[RAW JSON]", String(data: data, encoding: .utf8) ?? "Invalid data")
                 return data
             }
             .decode(type: ComplexSearchResponse.self, decoder: JSONDecoder())
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { [weak self] completion in
-                switch completion {
-                case .failure(let error):
-                    print("Ошибка декодирования: \(error.localizedDescription)")
-                case .finished:
-                    break
+                self?.isLoading = false
+                if case .failure(let error) = completion {
+                    print("loading error: \(error.localizedDescription)")
                 }
-                self?.isLoading = false
             }, receiveValue: { [weak self] response in
-                self?.allRecipes.append(contentsOf: response.results)
-                self?.currentOffset += self?.pageSize ?? 100
-                self?.isLoading = false
+                let simplifiedRecipes = response.results.map { recipe -> Recipe in
+                    var calories: Double = 0
+                    var protein: Double = 0
+                    var fat: Double = 0
+                    var carbs: Double = 0
+                    
+                    if let nutrition = recipe.nutrition {
+                        for nutrient in nutrition.nutrients {
+                            switch nutrient.name.lowercased() {
+                            case "calories":
+                                calories = nutrient.amount
+                            case "protein":
+                                protein = nutrient.amount
+                            case "fat":
+                                fat = nutrient.amount
+                            case "carbohydrates":
+                                carbs = nutrient.amount
+                            default:
+                                continue
+                            }
+                        }
+                    }
+                    
+                    return Recipe(
+                        id: recipe.id,
+                        title: recipe.title,
+                        calories: calories,
+                        protein: protein,
+                        fat: fat,
+                        carbs: carbs
+                    )
+                }
+                self?.allRecipes.append(contentsOf: simplifiedRecipes.filter { recipe in
+                    !(self?.allRecipes.contains(where: { $0.id == recipe.id }) ?? false)
+                })
+                self?.currentOffset += self?.pageSize ?? 0
             })
-
     }
+
 }
 
 // MARK: - Response Wrapper
 
 struct ComplexSearchResponse: Codable {
-    let results: [Recipe]
-    let totalResults: Int?
+    let results: [RecipeAPIModel]
 }
 
+struct RecipeAPIModel: Codable {
+    let id: Int
+    let title: String
+    let nutrition: Nutrition?
+}
 
+struct Nutrition: Codable {
+    let nutrients: [Nutrient]
+}
+
+struct Nutrient: Codable {
+    let name: String
+    let amount: Double
+    let unit: String
+}

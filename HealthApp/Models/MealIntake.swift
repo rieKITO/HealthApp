@@ -6,3 +6,12 @@
 //
 
 import Foundation
+
+struct MealIntake: Identifiable {
+    let id: UUID
+    let type: String
+    let date: Date
+    let recipeIds: [Int]
+}
+
+
