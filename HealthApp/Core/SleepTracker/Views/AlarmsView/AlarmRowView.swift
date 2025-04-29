@@ -9,6 +9,8 @@ import SwiftUI
 
 struct AlarmRowView: View {
     
+    // MARK: - Binding
+    
     @Binding
     var alarm: Alarm
     
@@ -16,32 +18,8 @@ struct AlarmRowView: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            HStack {
-                VStack(alignment: .leading) {
-                    Text(alarm.time, style: .time)
-                        .font(.title)
-                        .bold()
-                        .foregroundStyle(Color.theme.accent)
-                    Text(alarm.description)
-                        .font(.subheadline)
-                        .foregroundStyle(Color.theme.secondaryText)
-                }
-                Spacer()
-                Toggle("", isOn: $alarm.isEnabled)
-                    .tint(Color.theme.accentBlue)
-            }
-            HStack {
-                ForEach(Weekday.allCases, id: \.self) { weekday in
-                    Circle()
-                        .fill(alarm.repeatDays.contains(weekday) ? Color.theme.accentBlue.opacity(0.7) : Color.gray.opacity(0.3))
-                        .frame(width: 30, height: 30)
-                        .overlay {
-                            Text(String(weekday.rawValue.prefix(1)).uppercased())
-                                .bold()
-                                .foregroundStyle(Color.theme.accent)
-                        }
-                }
-            }
+            alarmHeader
+            weekdays
         }
         .padding()
         .background(
@@ -51,6 +29,44 @@ struct AlarmRowView: View {
         )
     }
 
+}
+
+// MARK: - Subviews
+
+private extension AlarmRowView {
+    
+    private var alarmHeader: some View {
+        HStack {
+            VStack(alignment: .leading) {
+                Text(alarm.time, style: .time)
+                    .font(.title)
+                    .bold()
+                    .foregroundStyle(Color.theme.accent)
+                Text(alarm.description)
+                    .font(.subheadline)
+                    .foregroundStyle(Color.theme.secondaryText)
+            }
+            Spacer()
+            Toggle("", isOn: $alarm.isEnabled)
+                .tint(Color.theme.accentBlue)
+        }
+    }
+    
+    private var weekdays: some View {
+        HStack {
+            ForEach(Weekday.allCases, id: \.self) { weekday in
+                Circle()
+                    .fill(alarm.repeatDays.contains(weekday) ? Color.theme.accentBlue.opacity(0.7) : Color.gray.opacity(0.3))
+                    .frame(width: 30, height: 30)
+                    .overlay {
+                        Text(String(weekday.rawValue.prefix(1)).uppercased())
+                            .bold()
+                            .foregroundStyle(Color.theme.accent)
+                    }
+            }
+        }
+    }
+    
 }
 
 // MARK: - Preview
