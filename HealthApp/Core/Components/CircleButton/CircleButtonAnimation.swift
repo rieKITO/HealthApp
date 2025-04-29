@@ -22,9 +22,6 @@ struct CircleButtonAnimation: View {
                 animate ? .easeOut(duration: 0.5) : .none,
                 value: animate
             )
-//            .onAppear {
-//                animate = true
-//            }
     }
 }
 
