@@ -1,13 +1,13 @@
 //
-//  MealPlannerView.swift
+//  RecipeSearchView.swift
 //  HealthApp
 //
-//  Created by Александр Потёмкин on 27.04.2025.
+//  Created by Александр Потёмкин on 30.04.2025.
 //
 
 import SwiftUI
 
-struct MealPlannerView: View {
+struct RecipeSearchView: View {
     
     // MARK: - Environment
     
@@ -20,23 +20,24 @@ struct MealPlannerView: View {
     // MARK: - Body
     
     var body: some View {
-        MealPlannerViewHeader
+        recipeSearchHeader
             .padding(.top)
-        VStack {
-            mealIntakes
-            Spacer()
+        ScrollView {
+            ForEach(viewModel.allRecipes) { recipe in
+                RecipeRowView(recipe: recipe)
+                    .padding(.horizontal)
+            }
         }
-        .padding()
     }
 }
 
 // MARK: - Subviews
 
-private extension MealPlannerView {
-    
-    private var MealPlannerViewHeader: some View {
+private extension RecipeSearchView {
+
+    private var recipeSearchHeader: some View {
         ZStack {
-            Text("Meal Planner")
+            Text("Food Database")
                 .font(.headline)
                 .fontWeight(.heavy)
                 .frame(maxWidth: .infinity, alignment: .center)
@@ -54,16 +55,17 @@ private extension MealPlannerView {
         .foregroundStyle(Color.theme.accentGreen)
     }
     
-    private var mealIntakes: some View {
-        ForEach(viewModel.todayMealIntakes) { intake in
-            let recipes = viewModel.getMealIntakeRecipes(for: intake)
-            MealIntakeRowView(mealIntake: intake, recipes: recipes)
-        }
-    }
-    
 }
 
-#Preview {
-    MealPlannerView()
-        .environment(DeveloperPreview.instance.nutritionViewModel.self)
+// MARK: - Preview
+
+#Preview("Light Mode") {
+    RecipeSearchView()
+        .environment(DeveloperPreview.instance.nutritionViewModel)
+}
+
+#Preview("Dark Mode") {
+    RecipeSearchView()
+        .environment(DeveloperPreview.instance.nutritionViewModel)
+        .preferredColorScheme(.dark)
 }

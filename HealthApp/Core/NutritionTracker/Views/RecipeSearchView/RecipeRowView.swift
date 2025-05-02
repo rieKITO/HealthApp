@@ -19,7 +19,6 @@ struct RecipeRowView: View {
         VStack {
             recipeHeader
             recipeInfo
-                .padding(.horizontal, 25)
             Button {
                 
             } label: {
@@ -34,6 +33,7 @@ struct RecipeRowView: View {
                 .fill(Color.theme.background)
         )
     }
+    
 }
 
 // MARK: - Subviews
@@ -43,7 +43,8 @@ private extension RecipeRowView {
     private var recipeHeader: some View {
         HStack {
             Text(recipe.title)
-                .frame(maxWidth: UIScreen.main.bounds.width * 0.6)
+                .frame(maxWidth: UIScreen.main.bounds.width * 0.6, alignment: .leading)
+                .multilineTextAlignment(.leading)
             Spacer()
             VStack {
                 Text(recipe.caloriesText)
@@ -57,48 +58,31 @@ private extension RecipeRowView {
     
     private var recipeInfo: some View {
         HStack {
-            VStack {
-                Text("Protein")
-                    .foregroundStyle(Color.theme.secondaryText)
-                    .font(.subheadline)
-                Text(recipe.protein.asNumberString() + "g")
-                    .font(.headline)
-            }
-            .padding()
-            .background(
-                RoundedRectangle(cornerRadius: 25)
-                    .foregroundStyle(Color.theme.secondaryText.opacity(0.1))
-                    .frame(width: 110, height: 55)
-            )
+            nutrientColumn(title: "Protein", value: "\(recipe.protein.asNumberString())g")
             Spacer()
-            VStack {
-                Text("Carbs")
-                    .foregroundStyle(Color.theme.secondaryText)
-                    .font(.subheadline)
-                Text(recipe.carbs.asNumberString() + "g")
-                    .font(.headline)
-            }
-            .padding()
-            .background(
-                RoundedRectangle(cornerRadius: 25)
-                    .foregroundStyle(Color.theme.secondaryText.opacity(0.1))
-                    .frame(width: 110, height: 55)
-            )
+            nutrientColumn(title: "Carbs", value: "\(recipe.carbs.asNumberString())g")
             Spacer()
-            VStack {
-                Text("Fats")
-                    .foregroundStyle(Color.theme.secondaryText)
-                    .font(.subheadline)
-                Text(recipe.fat.asNumberString() + "g")
-                    .font(.headline)
-            }
-            .padding()
-            .background(
-                RoundedRectangle(cornerRadius: 25)
-                    .foregroundStyle(Color.theme.secondaryText.opacity(0.1))
-                    .frame(width: 110, height: 55)
-            )
+            nutrientColumn(title: "Fats", value: "\(recipe.fat.asNumberString())g")
         }
+        .padding(.vertical, 10)
+        .padding(.horizontal, 20)
+        .frame(maxWidth: 330)
+    }
+
+    
+    private func nutrientColumn(title: String, value: String) -> some View {
+        VStack {
+            Text(title)
+                .foregroundStyle(Color.theme.secondaryText)
+                .font(.subheadline)
+            Text(value)
+                .font(.headline)
+        }
+        .frame(width: 100, height: 55)
+        .background(
+            RoundedRectangle(cornerRadius: 25)
+                .foregroundStyle(Color.theme.secondaryText.opacity(0.1))
+        )
     }
     
     private var addButtonLabel: some View {
@@ -111,7 +95,6 @@ private extension RecipeRowView {
                 RoundedRectangle(cornerRadius: 10)
                     .foregroundStyle(Color.theme.mutedGreen.opacity(1))
             )
-            .padding(.horizontal, 10)
     }
     
 }

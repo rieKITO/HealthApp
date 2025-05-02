@@ -24,7 +24,7 @@ class RecipeDataService {
     
     private var currentOffset = 0
     
-    private let pageSize = 10
+    private let pageSize = 5
     
     private let totalLimit = 5
     

@@ -28,9 +28,9 @@ struct DeveloperPreview {
         id: 1,
         title: "Red Lentil Soup with Chiken and Turnips",
         calories: 477,
-        protein: 10,
-        fat: 56,
-        carbs: 2.0
+        protein: 10.8,
+        fat: 5.6,
+        carbs: 75.3
     )
     
 }

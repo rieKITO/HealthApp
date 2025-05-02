@@ -27,13 +27,28 @@ struct NutritionTrackerView: View {
                         mealPlannerLabel
                     }
                     NavigationLink {
+                        RecipeSearchView()
+                            .navigationBarBackButtonHidden(true)
+                    } label: {
+                        recipeSearchLabel
+                    }
+                }
+                .padding(.horizontal)
+                HStack {
+                    NavigationLink {
                         
                     } label: {
                         waterPlannerLabel
                     }
+                    NavigationLink {
+                        
+                    } label: {
+                        nutritionHistoryLabel
+                    }
                 }
                 .padding(.horizontal)
             }
+            
         }
         .padding(.top)
         .environment(viewModel)
@@ -70,6 +85,32 @@ private extension NutritionTrackerView {
             }
     }
     
+    private var recipeSearchLabel: some View {
+        RoundedRectangle(cornerRadius: 10)
+            .stroke(Color.theme.accent.opacity(0.5), lineWidth: 2)
+            .fill(Color.theme.background)
+            .frame(maxWidth: .infinity)
+            .frame(height: 180)
+            .overlay {
+                VStack(alignment: .leading) {
+                    HStack {
+                        Image(systemName: "carrot.fill")
+                            .font(.title2)
+                            .frame(width: 30, height: 30)
+                        Text("Recipe Search")
+                            .font(.headline)
+                        Spacer()
+                    }
+                    .foregroundStyle(Color.theme.accentGreen)
+                    Text("Browse food and recipes")
+                        .multilineTextAlignment(.leading)
+                        .foregroundStyle(Color.theme.secondaryText)
+                    Spacer()
+                }
+                .padding(10)
+            }
+    }
+    
     private var waterPlannerLabel: some View {
         RoundedRectangle(cornerRadius: 10)
             .stroke(Color.theme.accent.opacity(0.5), lineWidth: 2)
@@ -96,10 +137,41 @@ private extension NutritionTrackerView {
             }
     }
     
+    private var nutritionHistoryLabel: some View {
+        RoundedRectangle(cornerRadius: 10)
+            .stroke(Color.theme.accent.opacity(0.5), lineWidth: 2)
+            .fill(Color.theme.background)
+            .frame(maxWidth: .infinity)
+            .frame(height: 180)
+            .overlay {
+                VStack(alignment: .leading) {
+                    HStack {
+                        Image(systemName: "calendar")
+                            .font(.title2)
+                            .frame(width: 30, height: 30)
+                        Text("History")
+                            .font(.headline)
+                        Spacer()
+                    }
+                    .foregroundStyle(Color.theme.accentGreen)
+                    Text("Review past meals")
+                        .multilineTextAlignment(.leading)
+                        .foregroundStyle(Color.theme.secondaryText)
+                    Spacer()
+                }
+                .padding(10)
+            }
+    }
+    
 }
 
 // MARK: - Preview
 
 #Preview("Light Mode") {
     NutritionTrackerView()
+}
+
+#Preview("Dark Mode") {
+    NutritionTrackerView()
+        .preferredColorScheme(.dark)
 }
