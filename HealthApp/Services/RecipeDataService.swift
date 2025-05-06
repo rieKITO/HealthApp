@@ -52,6 +52,54 @@ class RecipeDataService {
         fetchRecipes(offset: currentOffset)
     }
     
+    func searchRecipes(query: String, completion: @escaping (Result<[Recipe], Error>) -> Void) {
+            let apiKey = Secrets.spoonacularAPIKey
+        
+            let encodedQuery = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        
+            let urlString = """
+            https://api.spoonacular.com/recipes/complexSearch?query=\(encodedQuery)&number=10&addRecipeNutrition=true&apiKey=\(apiKey)
+            """
+        
+            guard let url = URL(string: urlString) else {
+                completion(.success([]))
+                return
+            }
+
+            NetworkingManager.download(url: url)
+                .decode(type: ComplexSearchResponse.self, decoder: JSONDecoder())
+                .map { response -> [Recipe] in
+                    response.results.map { apiModel in
+                        var calories = 0.0, protein = 0.0, fat = 0.0, carbs = 0.0
+                        apiModel.nutrition?.nutrients.forEach {
+                            switch $0.name.lowercased() {
+                            case "calories": calories = $0.amount
+                            case "protein": protein = $0.amount
+                            case "fat": fat = $0.amount
+                            case "carbohydrates": carbs = $0.amount
+                            default: break
+                            }
+                        }
+                        return Recipe(
+                            id: apiModel.id,
+                            title: apiModel.title,
+                            calories: calories,
+                            protein: protein,
+                            fat: fat,
+                            carbs: carbs
+                        )
+                    }
+                }
+                .sink(receiveCompletion: { completionResult in
+                    if case .failure(let error) = completionResult {
+                        completion(.failure(error))
+                    }
+                }, receiveValue: { recipes in
+                    completion(.success(recipes))
+                })
+                .store(in: &cancellables)
+        }
+    
     // MARK: - Private Methods
 
     private func fetchRecipes(offset: Int) {

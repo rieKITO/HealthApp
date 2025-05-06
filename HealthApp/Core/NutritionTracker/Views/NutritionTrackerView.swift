@@ -22,12 +22,14 @@ struct NutritionTrackerView: View {
                 HStack {
                     NavigationLink {
                         MealPlannerView()
+                            .environment(viewModel)
                             .navigationBarBackButtonHidden(true)
                     } label: {
                         mealPlannerLabel
                     }
                     NavigationLink {
                         RecipeSearchView()
+                            .environment(viewModel)
                             .navigationBarBackButtonHidden(true)
                     } label: {
                         recipeSearchLabel
@@ -48,10 +50,9 @@ struct NutritionTrackerView: View {
                 }
                 .padding(.horizontal)
             }
-            
         }
         .padding(.top)
-        .environment(viewModel)
+        
     }
 }
 

@@ -15,6 +15,8 @@ class NutritionViewModel {
     
     var allRecipes: [Recipe] = []
     
+    var searchedRecipes: [Recipe] = []
+    
     var todayMealIntakes: [MealIntake] = []
     
     var isLoading: Bool = false
@@ -44,6 +46,7 @@ class NutritionViewModel {
                 self?.allRecipes = returnedRecipes
             }
             .store(in: &cancellables)
+        
         mealIntakeService.$mealIntakes
             .receive(on: DispatchQueue.main)
             .sink { [weak self] intakes in
@@ -56,6 +59,26 @@ class NutritionViewModel {
     }
     
     // MARK: - Public Methods
+    
+    func searchRecipes(by title: String) {
+            guard !title.isEmpty else {
+                searchedRecipes = []
+                return
+            }
+            isLoading = true
+            recipeDataService.searchRecipes(query: title) { [weak self] result in
+                DispatchQueue.main.async {
+                    self?.isLoading = false
+                    switch result {
+                    case .success(let recipes):
+                        self?.searchedRecipes = recipes
+                    case .failure(let error):
+                        print("Search error: \(error.localizedDescription)")
+                        self?.searchedRecipes = []
+                    }
+                }
+            }
+        }
     
     func getMealIntakeRecipes(for mealIntake: MealIntake) -> [Recipe] {
         allRecipes.filter { mealIntake.recipeIds.contains($0.id) }

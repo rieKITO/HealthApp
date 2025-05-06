@@ -17,16 +17,43 @@ struct RecipeSearchView: View {
     @Environment(NutritionViewModel.self)
     private var viewModel
     
+    // MARK: - State
+    
+    @State
+    private var textFieldText: String = ""
+    
     // MARK: - Body
     
     var body: some View {
-        recipeSearchHeader
-            .padding(.top)
-        ScrollView {
-            ForEach(viewModel.allRecipes) { recipe in
-                RecipeRowView(recipe: recipe)
-                    .padding(.horizontal)
+        VStack {
+            recipeSearchHeader
+                .padding(.top)
+            TextField("Search recipe...", text: $textFieldText)
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.theme.accentGreen, lineWidth: 2)
+                        .fill(Color.theme.background)
+                )
+                .padding()
+                .onChange(of: textFieldText) { oldValue, newValue  in
+                    viewModel.searchRecipes(by: newValue)
+                }
+            ScrollView {
+                let recipesToShow = textFieldText.isEmpty ? viewModel.allRecipes : viewModel.searchedRecipes
+                if recipesToShow.isEmpty && !textFieldText.isEmpty {
+                    Text("No results found.")
+                        .foregroundStyle(.secondary)
+                        .padding()
+                } else {
+                    ForEach(recipesToShow) { recipe in
+                        RecipeRowView(recipe: recipe)
+                            .padding(.horizontal)
+                            .padding(.bottom, 8)
+                    }
+                }
             }
+            Spacer()
         }
     }
 }
