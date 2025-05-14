@@ -40,16 +40,18 @@ struct RecipeSearchView: View {
                     viewModel.searchRecipes(by: newValue)
                 }
             ScrollView {
-                let recipesToShow = textFieldText.isEmpty ? viewModel.allRecipes : viewModel.searchedRecipes
-                if recipesToShow.isEmpty && !textFieldText.isEmpty {
-                    Text("No results found.")
-                        .foregroundStyle(.secondary)
-                        .padding()
-                } else {
-                    ForEach(recipesToShow) { recipe in
-                        RecipeRowView(recipe: recipe)
-                            .padding(.horizontal)
-                            .padding(.bottom, 8)
+                LazyVStack {
+                    let recipesToShow = textFieldText.isEmpty ? viewModel.allRecipes : viewModel.searchedRecipes
+                    if recipesToShow.isEmpty && !textFieldText.isEmpty {
+                        Text("No results found.")
+                            .foregroundStyle(.secondary)
+                            .padding()
+                    } else {
+                        ForEach(recipesToShow) { recipe in
+                            RecipeRowView(recipe: recipe)
+                                .padding(.horizontal)
+                                .padding(.bottom, 8)
+                        }
                     }
                 }
             }
