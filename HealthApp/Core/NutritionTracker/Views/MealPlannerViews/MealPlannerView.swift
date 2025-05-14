@@ -58,8 +58,7 @@ private extension MealPlannerView {
     
     private var mealIntakes: some View {
         ForEach(viewModel.todayMealIntakes) { intake in
-            let recipes = viewModel.getMealIntakeRecipes(for: intake)
-            MealIntakeRowView(mealIntake: intake, recipes: recipes)
+            MealIntakeRowView(mealIntake: intake)
         }
     }
     

@@ -9,20 +9,38 @@ import SwiftUI
 
 struct MealIntakeRowView: View {
     
-    var mealIntake: MealIntake
+    // MARK: - View Model
     
-    var recipes: [Recipe]
+    @Environment(NutritionViewModel.self)
+    private var viewModel
+    
+    // MARK: - Private Properties
     
     private var totalCalories: Double {
         recipes.reduce(0) { $0 + $1.calories }
     }
+    
+    // MARK: - Public Properties
+    
+    var mealIntake: MealIntake
+    
+    var recipes: [Recipe] {
+        viewModel.getMealIntakeRecipes(for: mealIntake)
+    }
+    
+    // MARK: - Body
     
     var body: some View {
         VStack(alignment: .leading) {
             mealIntakeRowHeader
             Group {
                 recipesList
-                addFoodItemButton
+                NavigationLink {
+                    RecipeSearchView()
+                        .environment(viewModel)
+                } label: {
+                    addFoodItemButton
+                }
             }
             .padding(.leading, 50)
             .padding(.vertical, recipes.count > 0 ? 5 : 1)
@@ -103,7 +121,7 @@ private extension MealIntakeRowView {
         ]
         
         var body: some View {
-            MealIntakeRowView(mealIntake: mealIntake, recipes: recipes)
+            MealIntakeRowView(mealIntake: mealIntake)
         }
     }
     
@@ -124,7 +142,7 @@ private extension MealIntakeRowView {
         ]
         
         var body: some View {
-            MealIntakeRowView(mealIntake: mealIntake, recipes: recipes)
+            MealIntakeRowView(mealIntake: mealIntake)
                 .preferredColorScheme(.dark)
         }
     }
