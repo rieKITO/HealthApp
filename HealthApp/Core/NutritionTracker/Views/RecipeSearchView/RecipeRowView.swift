@@ -9,6 +9,16 @@ import SwiftUI
 
 struct RecipeRowView: View {
     
+    // MARK: - View Model
+    
+    @Environment(NutritionViewModel.self)
+    private var viewModel
+    
+    // MARK: - State
+    
+    @State
+    private var showMealPicker = false
+    
     // MARK: - Properties
     
     var recipe: Recipe
@@ -20,9 +30,16 @@ struct RecipeRowView: View {
             recipeHeader
             recipeInfo
             Button {
-                
+                showMealPicker.toggle()
             } label: {
                 addButtonLabel
+            }
+            .confirmationDialog("Select Meal", isPresented: $showMealPicker) {
+                ForEach(viewModel.todayMealIntakes) { intake in
+                    Button(intake.type) {
+                        viewModel.addRecipeToMealIntake(recipe, to: intake)
+                    }
+                }
             }
 
         }
