@@ -17,6 +17,8 @@ class NutritionViewModel {
     
     var searchedRecipes: [Recipe] = []
     
+    var allMealIntakes: [MealIntake] = []
+    
     var todayMealIntakes: [MealIntake] = []
     
     var isLoading: Bool = false
@@ -44,6 +46,13 @@ class NutritionViewModel {
         recipeDataService.$allRecipes
             .sink { [weak self] returnedRecipes in
                 self?.allRecipes = returnedRecipes
+            }
+            .store(in: &cancellables)
+        
+        mealIntakeService.$mealIntakes
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] intakes in
+                self?.allMealIntakes = intakes
             }
             .store(in: &cancellables)
         
