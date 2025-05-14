@@ -22,11 +22,13 @@ struct MealPlannerView: View {
     var body: some View {
         MealPlannerViewHeader
             .padding(.top)
-        VStack {
-            mealIntakes
-            Spacer()
+        ScrollView {
+            LazyVStack {
+                mealIntakes
+                Spacer()
+            }
+            .padding()
         }
-        .padding()
     }
 }
 
@@ -63,7 +65,15 @@ private extension MealPlannerView {
     
 }
 
-#Preview {
+// MARK: - Preview
+
+#Preview("Light Mode") {
     MealPlannerView()
         .environment(DeveloperPreview.instance.nutritionViewModel.self)
+}
+
+#Preview("Dark Mode") {
+    MealPlannerView()
+        .environment(DeveloperPreview.instance.nutritionViewModel.self)
+        .preferredColorScheme(.dark)
 }
