@@ -32,7 +32,7 @@ struct MealIntakeRowView: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            MealIntakeSimpleRowView(mealIntake: mealIntake)
+            mealIntakeRowHeader
             Group {
                 recipesList
                 NavigationLink {
@@ -57,6 +57,29 @@ struct MealIntakeRowView: View {
 // MARK: - Subviews
 
 private extension MealIntakeRowView {
+    
+    private var mealIntakeRowHeader: some View {
+            HStack {
+                Image(systemName: "fork.knife")
+                    .foregroundStyle(Color.theme.accentGreen)
+                    .frame(width: 40, height: 40)
+                    .background(Circle().fill(Color.theme.mutedGreen))
+                VStack(alignment: .leading) {
+                    Text(mealIntake.type)
+                        .font(.headline)
+                    HStack {
+                        Image(systemName: "clock")
+                            .font(.caption)
+                        Text(mealIntake.date, style: .time)
+                            .font(.subheadline)
+                    }
+                    .foregroundStyle(Color.theme.secondaryText)
+                }
+                Spacer()
+                Text("\(totalCalories, specifier: "%.0f") cal")
+                    .font(.headline)
+            }
+        }
     
     private var recipesList: some View {
         VStack {
