@@ -43,7 +43,9 @@ struct NutritionTrackerView: View {
                         waterPlannerLabel
                     }
                     NavigationLink {
-                        
+                        NutritionHistoryView()
+                            .environment(viewModel)
+                            .navigationBarBackButtonHidden(true)
                     } label: {
                         nutritionHistoryLabel
                     }

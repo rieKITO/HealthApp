@@ -8,11 +8,84 @@
 import SwiftUI
 
 struct NutritionHistoryView: View {
+    
+    // MARK: - Environment
+    
+    @Environment(NutritionViewModel.self)
+    private var viewModel
+    
+    @Environment(\.dismiss)
+    private var dismiss
+    
+    // MARK: - Private Properties
+    
+    private var groupedMealIntakes: [Date: [MealIntake]] {
+        Dictionary(grouping: viewModel.allMealIntakes) { intake in
+            Calendar.current.startOfDay(for: intake.date)
+        }
+    }
+    
+    private var sortedDates: [Date] {
+        groupedMealIntakes.keys.sorted(by: >)
+    }
+    
+    // MARK: - Body
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        NutritionHistoryViewHeader
+            .padding(.top)
+        ScrollView {
+            LazyVStack(alignment: .leading) {
+                Text("Meal History")
+                    .font(.title3)
+                    .bold()
+                    .padding(.horizontal)
+                ForEach(sortedDates, id: \.self) { date in
+                    if let intakes = groupedMealIntakes[date] {
+                        MealIntakeGroupView(mealIntakes: intakes)
+                            .padding(.bottom)
+                    }
+                }
+            }
+        }
     }
 }
 
-#Preview {
+// MARK: - Subviews
+
+private extension NutritionHistoryView {
+    
+    private var NutritionHistoryViewHeader: some View {
+        ZStack {
+            Text("Nutrition History")
+                .font(.headline)
+                .fontWeight(.heavy)
+                .frame(maxWidth: .infinity, alignment: .center)
+            HStack {
+                Image(systemName: "chevron.left")
+                    .font(.headline)
+                    .onTapGesture {
+                        dismiss.callAsFunction()
+                    }
+                    .padding(.leading)
+                Spacer()
+            }
+            .padding(10)
+        }
+        .foregroundStyle(Color.theme.accentGreen)
+    }
+    
+}
+
+// MARK: - Preview
+
+#Preview("Light Mode") {
     NutritionHistoryView()
+        .environment(DeveloperPreview.instance.nutritionViewModel)
+}
+
+#Preview("Dark Mode") {
+    NutritionHistoryView()
+        .environment(DeveloperPreview.instance.nutritionViewModel)
+        .preferredColorScheme(.dark)
 }
