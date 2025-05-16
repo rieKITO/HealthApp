@@ -32,7 +32,7 @@ struct MealIntakeRowView: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            mealIntakeRowHeader
+            MealIntakeSimpleRowView(mealIntake: mealIntake)
             Group {
                 recipesList
                 NavigationLink {
@@ -57,29 +57,6 @@ struct MealIntakeRowView: View {
 // MARK: - Subviews
 
 private extension MealIntakeRowView {
-    
-    private var mealIntakeRowHeader: some View {
-        HStack {
-            Image(systemName: "fork.knife")
-                .foregroundStyle(Color.theme.accentGreen)
-                .frame(width: 40, height: 40)
-                .background(Circle().fill(Color.theme.mutedGreen))
-            VStack(alignment: .leading) {
-                Text(mealIntake.type)
-                    .font(.headline)
-                HStack {
-                    Image(systemName: "clock")
-                        .font(.caption)
-                    Text(mealIntake.date, style: .time)
-                        .font(.subheadline)
-                }
-                .foregroundStyle(Color.theme.secondaryText)
-            }
-            Spacer()
-            Text("\(totalCalories, specifier: "%.0f") cal")
-                .font(.headline)
-        }
-    }
     
     private var recipesList: some View {
         VStack {
@@ -109,44 +86,13 @@ private extension MealIntakeRowView {
 // MARK: - Preview
 
 #Preview("Light Mode") {
-    
-    struct Preview: View {
-        
-        @State
-        private var mealIntake = DeveloperPreview.instance.mealIntake
-        
-        private var recipes: [Recipe] = [
-            DeveloperPreview.instance.recipe,
-            DeveloperPreview.instance.recipe
-        ]
-        
-        var body: some View {
-            MealIntakeRowView(mealIntake: mealIntake)
-        }
-    }
-    
-    return Preview()
-    
+    MealIntakeRowView(mealIntake: DeveloperPreview.instance.mealIntake)
+        .environment(DeveloperPreview.instance.nutritionViewModel)
 }
 
 #Preview("Dark Mode") {
-    
-    struct Preview: View {
-        
-        @State
-        private var mealIntake = DeveloperPreview.instance.mealIntake
-        
-        private var recipes: [Recipe] = [
-            DeveloperPreview.instance.recipe,
-            DeveloperPreview.instance.recipe
-        ]
-        
-        var body: some View {
-            MealIntakeRowView(mealIntake: mealIntake)
-                .preferredColorScheme(.dark)
-        }
-    }
-    
-    return Preview()
-    
+    MealIntakeRowView(mealIntake: DeveloperPreview.instance.mealIntake)
+        .environment(DeveloperPreview.instance.nutritionViewModel)
+        .preferredColorScheme(.dark)
 }
+
