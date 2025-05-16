@@ -21,6 +21,12 @@ class DateFormatterHelper {
         return formatter.string(from: date)
     }
     
+    static func formatMediumDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        return formatter.string(from: date)
+    }
+    
     static func formatTime(_ date: Date?) -> String {
         guard let date = date else { return "--:--" }
         let formatter = DateFormatter()
