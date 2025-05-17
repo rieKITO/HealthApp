@@ -54,6 +54,7 @@ struct RecipeSearchView: View {
                         }
                     }
                 }
+                .padding(.top, 1)
             }
             Spacer()
         }
