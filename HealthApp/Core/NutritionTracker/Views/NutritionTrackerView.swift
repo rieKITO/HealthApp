@@ -9,11 +9,11 @@ import SwiftUI
 
 struct NutritionTrackerView: View {
     
-    // MARK: - View Model
+    // MARK: - Environment
     
-    @State
-    private var viewModel = NutritionViewModel()
-    
+    @Environment(NutritionViewModel.self)
+    private var viewModel
+
     // MARK: - Body
 
     var body: some View {

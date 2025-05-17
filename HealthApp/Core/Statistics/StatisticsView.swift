@@ -15,7 +15,10 @@ struct StatisticsView: View {
     // MARK: - Body
     
     var body: some View {
-        SleepWeeklyOverviewView(viewModel: sleepViewModel)
+        VStack {
+            SleepWeeklyOverviewView(viewModel: sleepViewModel)
+            NutritionWeeklyOverviewView()
+        }
     }
 }
 
@@ -23,9 +26,11 @@ struct StatisticsView: View {
 
 #Preview("Light Mode") {
     StatisticsView()
+        .environment(DeveloperPreview.instance.nutritionViewModel)
 }
 
 #Preview("Dark Mode") {
     StatisticsView()
+        .environment(DeveloperPreview.instance.nutritionViewModel)
         .preferredColorScheme(.dark)
 }

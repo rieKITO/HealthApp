@@ -100,4 +100,41 @@ class NutritionViewModel {
     func loadMoreRecipesIfNeeded(currentItem: Recipe?) {
         recipeDataService.loadMoreRecipesIfNeeded(currentItem: currentItem)
     }
+    
+    func getLastWeekCalories() -> [DailyCalories] {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        var result: [DailyCalories] = []
+        
+        for dayOffset in 0..<7 {
+            guard let date = calendar.date(byAdding: .day, value: -dayOffset, to: today) else { continue }
+            let intakes = allMealIntakes.filter { calendar.isDate($0.date, inSameDayAs: date) }
+            let totalCalories = intakes.reduce(0) { total, intake in
+                let recipes = getMealIntakeRecipes(for: intake)
+                return total + recipes.reduce(0) { $0 + $1.calories }
+            }
+            result.append(DailyCalories(date: date, calories: totalCalories))
+        }
+        
+        return result.sorted { $0.date < $1.date }
+    }
+    
+    func getAverageCalories() -> Double {
+        let calories = getLastWeekCalories().map { $0.calories }
+        return calories.reduce(0, +) / Double(calories.count)
+    }
+    
+    func getMaxCalories() -> Double {
+        return getLastWeekCalories().max(by: { $0.calories < $1.calories })?.calories ?? 0
+    }
+    
+    func getMinCalories() -> Double {
+        return getLastWeekCalories().min(by: { $0.calories < $1.calories })?.calories ?? 0
+    }
+    
+}
+
+struct DailyCalories {
+    let date: Date
+    let calories: Double
 }

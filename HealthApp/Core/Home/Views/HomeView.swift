@@ -12,6 +12,9 @@ struct HomeView: View {
     // MARK: - State
     
     @State
+    private var nutritionViewModel = NutritionViewModel()
+    
+    @State
     private var selectedTabItem: HomeTab = .sleep
     
     // MARK: - Properties
@@ -40,8 +43,10 @@ struct HomeView: View {
                     SleepTrackerView()
                 case .nutrition:
                     NutritionTrackerView()
+                        .environment(nutritionViewModel)
                 case .stats:
                     StatisticsView()
+                        .environment(nutritionViewModel)
                 }
                 Spacer()
                 CustomTabBarView(selectedTab: $selectedTabItem)
@@ -101,16 +106,16 @@ private extension HomeView {
 #Preview("Light Mode") {
     NavigationStack {
         HomeView()
+            .environment(DeveloperPreview.instance.nutritionViewModel)
             .toolbar(.hidden)
     }
-    .environment(DeveloperPreview.instance.nutritionViewModel)
 }
 
 #Preview("Dark Mode") {
     NavigationStack {
         HomeView()
+            .environment(DeveloperPreview.instance.nutritionViewModel)
             .toolbar(.hidden)
             .preferredColorScheme(.dark)
     }
-    .environment(DeveloperPreview.instance.nutritionViewModel)
 }
