@@ -114,6 +114,7 @@ class MealIntakeService {
     private func saveContext() {
         do {
             try container.viewContext.save()
+            fetchMealIntakes()
         } catch {
             print("save error: \(error.localizedDescription)")
         }
