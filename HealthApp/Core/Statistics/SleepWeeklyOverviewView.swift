@@ -8,13 +8,6 @@
 import SwiftUI
 import Charts
 
-struct AnimatedSleepEntry: Identifiable {
-    let id = UUID()
-    let date: Date
-    let targetHours: Double
-    var animatedHours: Double
-}
-
 struct SleepWeeklyOverviewView: View {
     
     // MARK: View Model
@@ -25,37 +18,21 @@ struct SleepWeeklyOverviewView: View {
     // MARK: - State
     
     @State
-    private var animatedEntries: [AnimatedSleepEntry] = []
+    private var animatedEntries: [AnimatedChartEntry] = []
     
     // MARK: - Body
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("Weekly Overview")
-                .font(.title2)
-                .bold()
-                .foregroundStyle(Color.theme.accentBlue)
-            Chart {
-                ForEach(animatedEntries) { entry in
-                    BarMark(
-                        x: .value("Date", entry.date, unit: .day),
-                        y: .value("Hours", entry.animatedHours)
-                    )
-                    .foregroundStyle(Color.theme.accentBlue)
-                }
-            }
-            .frame(height: 200)
-            HStack {
-                Text("Average: \(DateFormatterHelper.formatDuration(viewModel.getAverageSleep()))")
-                Spacer()
-                Text("Best: \(DateFormatterHelper.formatDuration(viewModel.getBestSleep()))")
-                Spacer()
-                Text("Worst: \(DateFormatterHelper.formatDuration(viewModel.getWorstSleep()))")
-            }
-            .font(.caption)
-            .padding(.top, 5)
-        }
-        .padding()
+        AnimatedBarChartView(
+            entries: $animatedEntries,
+            title: "Weekly Sleep",
+            valueSuffix: "hours",
+            averageValue: viewModel.getAverageSleep(),
+            bestValue: viewModel.getBestSleep(),
+            worstValue: viewModel.getWorstSleep(),
+            valueFormatter: DateFormatterHelper.formatDuration,
+            titleColor: Color.theme.accentBlue
+        )
         .onAppear {
             setupAnimatedEntries()
             animateBars()
@@ -65,24 +42,30 @@ struct SleepWeeklyOverviewView: View {
             animateBars()
         }
     }
+    
 }
 
 // MARK: - Setup
 
 private extension SleepWeeklyOverviewView {
     
-    func setupAnimatedEntries() {
-        let realEntries = viewModel.last7DaysSleep()
+    private func setupAnimatedEntries() {
+        let realEntries = viewModel.lastWeekSleep()
         animatedEntries = realEntries.map {
-            AnimatedSleepEntry(date: $0.date, targetHours: $0.hours, animatedHours: 0)
+            AnimatedChartEntry(
+                date: $0.date,
+                targetValue: $0.hours,
+                animatedValue: 0,
+                color: Color.theme.accentBlue
+            )
         }
     }
 
-    func animateBars() {
+    private func animateBars() {
         for index in animatedEntries.indices {
             DispatchQueue.main.asyncAfter(deadline: .now() + Double(index) * 0.1) {
                 withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
-                    animatedEntries[index].animatedHours = animatedEntries[index].targetHours
+                    animatedEntries[index].animatedValue = animatedEntries[index].targetValue
                 }
             }
         }
