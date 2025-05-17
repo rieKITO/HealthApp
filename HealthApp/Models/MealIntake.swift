@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct MealIntake: Identifiable {
+struct MealIntake: Identifiable, Equatable {
     let id: UUID
     let type: String
     let date: Date
