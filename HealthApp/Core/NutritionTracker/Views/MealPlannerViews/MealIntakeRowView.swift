@@ -38,6 +38,7 @@ struct MealIntakeRowView: View {
                 NavigationLink {
                     RecipeSearchView()
                         .environment(viewModel)
+                        .navigationBarBackButtonHidden(true)
                 } label: {
                     addFoodItemButton
                 }
