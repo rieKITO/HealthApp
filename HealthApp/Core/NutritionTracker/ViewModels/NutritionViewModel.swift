@@ -7,11 +7,12 @@
 
 import Foundation
 import Combine
+import SwiftUI
 
 @Observable
 class NutritionViewModel {
     
-    // MARK: - Published
+    // MARK: - Published Properties
     
     var allRecipes: [Recipe] = []
     
@@ -23,7 +24,7 @@ class NutritionViewModel {
     
     var isLoading: Bool = false
     
-    // MARK: - Private
+    // MARK: - Services
     
     @ObservationIgnored
     private let recipeDataService = RecipeDataService()
@@ -33,6 +34,48 @@ class NutritionViewModel {
     
     @ObservationIgnored
     private var cancellables = Set<AnyCancellable>()
+    
+    // MARK: - User Data
+    
+    @ObservationIgnored
+    @AppStorage("weight")
+    private var currentUserWeight: Double?
+    
+    @ObservationIgnored
+    @AppStorage("height")
+    private var currentUserHeight: Double?
+    
+    @ObservationIgnored
+    @AppStorage("age")
+    private var currentUserAge: Int?
+    
+    @ObservationIgnored
+    @AppStorage("gender")
+    private var userGender: String?
+    
+    @ObservationIgnored
+    @AppStorage("goal")
+    private var userGoal: String = "maintain"
+    
+    @ObservationIgnored
+    @AppStorage("activityLevel")
+    private var activityLevel: String = "moderate"
+    
+    // MARK: - Computed Properties
+    
+    var todayCalories: Double {
+        todayMealIntakes.reduce(0) { total, intake in
+            total + getMealIntakeRecipes(for: intake).reduce(0) { $0 + $1.calories }
+        }
+    }
+    
+    var targetCalories: Double {
+        calculateDailyCalories()
+    }
+    
+    var caloriesRatio: Double {
+        todayCalories / targetCalories
+    }
     
     // MARK: - Init
     
@@ -65,6 +108,44 @@ class NutritionViewModel {
                 }
             }
             .store(in: &cancellables)
+    }
+    
+    // MARK: - Private Methods
+    
+    private func calculateDailyCalories() -> Double {
+        guard
+            let weight = currentUserWeight,
+            let height = currentUserHeight,
+            let age = currentUserAge,
+            let gender = userGender
+        else { return 2000 }
+        
+        // 1. Calculate BMR
+        let bmr = gender.lowercased() == "male" ?
+            10 * weight + 6.25 * height - 5 * Double(age) + 5 :
+            10 * weight + 6.25 * height - 5 * Double(age) - 161
+        
+        // 2. Apply activity multiplier
+        let multiplier: Double = {
+            switch activityLevel.lowercased() {
+            case "sedentary": return 1.2
+            case "light": return 1.375
+            case "moderate": return 1.55
+            case "active": return 1.725
+            case "veryactive": return 1.9
+            default: return 1.55
+            }
+        }()
+        
+        let tdee = bmr * multiplier
+        
+        // 3. Adjust for goal
+        switch userGoal.lowercased() {
+        case "lose": return tdee - 500
+        case "gain": return tdee + 500
+        default: return tdee
+        }
+        
     }
     
     // MARK: - Public Methods
