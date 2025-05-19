@@ -53,7 +53,6 @@ struct TodaySleepSummaryView: View {
             Text("Today's Sleep Summary")
                 .font(.headline)
                 .foregroundStyle(Color.theme.accentBlue)
-
             HStack(alignment: .center) {
                 Text(DateFormatterHelper.formatDuration(dailySleepDuration))
                     .font(.system(size: 32, weight: .bold))
@@ -70,7 +69,6 @@ struct TodaySleepSummaryView: View {
                     .foregroundStyle(Color.theme.secondaryText)
                 }
             }
-            
             ProgressBarView(
                 currentValue: dailySleepDurationInHours,
                 maxValue: maxScale,
@@ -79,7 +77,6 @@ struct TodaySleepSummaryView: View {
                 height: 8
             )
             .padding(.top, 4)
-            
             HStack {
                 Text("0h")
                 Spacer()
