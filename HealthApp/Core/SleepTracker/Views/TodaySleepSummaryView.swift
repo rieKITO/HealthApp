@@ -70,20 +70,16 @@ struct TodaySleepSummaryView: View {
                     .foregroundStyle(Color.theme.secondaryText)
                 }
             }
-            GeometryReader { geometry in
-                ZStack(alignment: .leading) {
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(Color.theme.secondaryText.opacity(0.2))
-                        .frame(height: 8)
-                    
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(progressColor)
-                        .frame(width: max(0, min(CGFloat(dailySleepDurationInHours / maxScale), 1)) * geometry.size.width, height: 8)
-                        .animation(.spring(), value: dailySleepDurationInHours)
-                }
-            }
-            .frame(height: 8)
+            
+            ProgressBarView(
+                currentValue: dailySleepDurationInHours,
+                maxValue: maxScale,
+                targetValue: targetSleepInHours,
+                color: progressColor,
+                height: 8
+            )
             .padding(.top, 4)
+            
             HStack {
                 Text("0h")
                 Spacer()

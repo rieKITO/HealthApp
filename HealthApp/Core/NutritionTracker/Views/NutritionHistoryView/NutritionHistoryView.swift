@@ -35,11 +35,14 @@ struct NutritionHistoryView: View {
         NutritionHistoryViewHeader
             .padding(.top)
         ScrollView {
+            NutritionWeeklyOverviewView()
             LazyVStack(alignment: .leading) {
                 Text("Meal History")
-                    .font(.title3)
+                    .font(.title2)
                     .bold()
+                    .foregroundStyle(Color.theme.accentGreen)
                     .padding(.horizontal)
+                    .padding(.vertical, 5)
                 ForEach(sortedDates, id: \.self) { date in
                     if let intakes = groupedMealIntakes[date] {
                         MealIntakeGroupView(mealIntakes: intakes)
