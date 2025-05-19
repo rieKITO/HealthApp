@@ -22,6 +22,8 @@ struct OnboardingView: View {
      1 - Add name
      2 - Add age
      3 - Add gender
+     4 - Add weight
+     5 - Add height
     */
     @State
     private var onBoardingState: Int = 0
@@ -73,7 +75,6 @@ struct OnboardingView: View {
     
     var body: some View {
         ZStack {
-            // content
             ZStack {
                 switch onBoardingState {
                 case 0:
@@ -98,8 +99,6 @@ struct OnboardingView: View {
                     Text("Add name")
                 }
             }
-            
-            // buttons
             VStack {
                 Spacer()
                 bottomButton
@@ -316,7 +315,7 @@ private extension OnboardingView {
 private extension OnboardingView {
     
     func handleNextButtonPressed() {
-        // CHECK INPUTS
+        // Check inputs
         switch onBoardingState {
         case 1:
             guard name.count >= 3 else {
@@ -337,7 +336,7 @@ private extension OnboardingView {
             break
         }
         
-        // GO TO NEXT SECTION
+        // Go to next section
         if onBoardingState == 5 {
             signIn()
         } else {
@@ -351,6 +350,8 @@ private extension OnboardingView {
         currentUserName = name
         currentUserAge = Int(age)
         currentUserGender = gender
+        currentUserWeight = weight
+        currentUserHeight = height
         withAnimation(.spring()) {
             currentUserSignedIn = true
         }
