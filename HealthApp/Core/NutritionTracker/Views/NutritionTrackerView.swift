@@ -19,6 +19,7 @@ struct NutritionTrackerView: View {
     var body: some View {
         VStack {
             NavigationStack {
+                TodayNutritionSummaryView()
                 HStack {
                     NavigationLink {
                         MealPlannerView()
@@ -54,7 +55,6 @@ struct NutritionTrackerView: View {
             }
         }
         .padding(.top)
-        
     }
 }
 
@@ -172,9 +172,11 @@ private extension NutritionTrackerView {
 
 #Preview("Light Mode") {
     NutritionTrackerView()
+        .environment(DeveloperPreview.instance.nutritionViewModel)
 }
 
 #Preview("Dark Mode") {
     NutritionTrackerView()
+        .environment(DeveloperPreview.instance.nutritionViewModel)
         .preferredColorScheme(.dark)
 }
