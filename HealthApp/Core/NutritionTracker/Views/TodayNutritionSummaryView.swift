@@ -8,11 +8,104 @@
 import SwiftUI
 
 struct TodayNutritionSummaryView: View {
+    
+    // MARK: View Model
+    
+    @Environment(NutritionViewModel.self)
+    private var viewModel
+    
+    // MARK: - Computed Properties
+    
+    private var progressColor: Color {
+        switch viewModel.caloriesRatio {
+        case ..<0.85: return .red
+        case 0.85..<0.95: return .orange
+        case 0.95...1.05: return .green
+        case 1.05...1.15: return .orange
+        default: return .red
+        }
+    }
+    
+    private var maxCalories: Double {
+        max(viewModel.targetCalories * 1.5, 3000)
+    }
+    
+    // MARK: - Body
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack(alignment: .leading, spacing: 12) {
+            todayNutritionSummaryViewHeader
+            caloriesInfoView
+            ProgressBarView(
+                currentValue: viewModel.todayCalories,
+                maxValue: maxCalories,
+                targetValue: viewModel.targetCalories,
+                color: progressColor,
+                height: 8
+            )
+            .padding(.top, 4)
+            scaleLabelsView
+        }
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(Color.theme.accent.opacity(0.5), lineWidth: 2)
+                .fill(Color.theme.background)
+        )
+        .padding(.horizontal)
     }
 }
 
-#Preview {
+// MARK: - Subviews
+
+private extension TodayNutritionSummaryView {
+    
+    private var todayNutritionSummaryViewHeader: some View {
+        Text("Today's Nutrition Summary")
+            .font(.headline)
+            .foregroundStyle(Color.theme.accentGreen)
+    }
+    
+    private var caloriesInfoView: some View {
+        HStack(alignment: .center) {
+            Text("\(Int(viewModel.todayCalories)) kcal")
+                .font(.title)
+                .bold()
+            Spacer()
+            VStack(alignment: .trailing) {
+                Text("Daily Target:")
+                    .font(.caption)
+                Text("\(Int(viewModel.targetCalories)) kcal")
+                    .font(.subheadline)
+            }
+            .foregroundStyle(Color.theme.secondaryText)
+        }
+    }
+    
+    private var scaleLabelsView: some View {
+        HStack(spacing: 8) {
+            Text("0 kcal")
+            Spacer()
+            Text("\(Int(viewModel.targetCalories)) kcal")
+                .bold()
+            Spacer()
+            Text("\(Int(maxCalories)) kcal")
+        }
+        .font(.caption)
+        .foregroundStyle(Color.theme.secondaryText)
+    }
+    
+}
+
+// MARK: - Preview
+
+#Preview("Light Mode") {
     TodayNutritionSummaryView()
+        .environment(DeveloperPreview.instance.nutritionViewModel)
+}
+
+#Preview("Dark Mode") {
+    TodayNutritionSummaryView()
+        .environment(DeveloperPreview.instance.nutritionViewModel)
+        .preferredColorScheme(.dark)
 }
