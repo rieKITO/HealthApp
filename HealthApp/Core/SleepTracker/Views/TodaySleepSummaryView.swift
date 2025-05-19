@@ -50,25 +50,8 @@ struct TodaySleepSummaryView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Today's Sleep Summary")
-                .font(.headline)
-                .foregroundStyle(Color.theme.accentBlue)
-            HStack(alignment: .center) {
-                Text(DateFormatterHelper.formatDuration(dailySleepDuration))
-                    .font(.system(size: 32, weight: .bold))
-                    .foregroundStyle(Color.theme.accent)
-                Spacer()
-                if let sleep = lastSleepRecord,
-                   let end = sleep.endTime {
-                    VStack {
-                        Text("Last sleep:")
-                            .font(.caption)
-                        Text("\(sleep.startTime.formatted(date: .omitted, time: .shortened)) - \(end.formatted(date: .omitted, time: .shortened))")
-                            .font(.subheadline)
-                    }
-                    .foregroundStyle(Color.theme.secondaryText)
-                }
-            }
+            todaySleepSummaryViewHeader
+            dailySleepInfo
             ProgressBarView(
                 currentValue: dailySleepDurationInHours,
                 maxValue: maxScale,
@@ -77,15 +60,7 @@ struct TodaySleepSummaryView: View {
                 height: 8
             )
             .padding(.top, 4)
-            HStack {
-                Text("0h")
-                Spacer()
-                Text("Target: \(Int(targetSleepInHours))h")
-                Spacer()
-                Text("\(Int(maxScale))h")
-            }
-            .font(.caption)
-            .foregroundStyle(Color.theme.secondaryText)
+            scaleLabelsView
         }
         .padding()
         .background(
@@ -95,6 +70,50 @@ struct TodaySleepSummaryView: View {
         )
         .padding(.horizontal)
     }
+}
+
+// MARK: - Subviews
+
+private extension TodaySleepSummaryView {
+    
+    private var todaySleepSummaryViewHeader: some View {
+        Text("Today's Sleep Summary")
+            .font(.headline)
+            .foregroundStyle(Color.theme.accentBlue)
+    }
+    
+    private var dailySleepInfo: some View {
+        HStack(alignment: .center) {
+            Text(DateFormatterHelper.formatDuration(dailySleepDuration))
+                .font(.title)
+                .bold()
+                .foregroundStyle(Color.theme.accent)
+            Spacer()
+            if let sleep = lastSleepRecord,
+               let end = sleep.endTime {
+                VStack {
+                    Text("Last sleep:")
+                        .font(.caption)
+                    Text("\(sleep.startTime.formatted(date: .omitted, time: .shortened)) - \(end.formatted(date: .omitted, time: .shortened))")
+                        .font(.subheadline)
+                }
+                .foregroundStyle(Color.theme.secondaryText)
+            }
+        }
+    }
+    
+    private var scaleLabelsView: some View {
+        HStack {
+            Text("0h")
+            Spacer()
+            Text("Target: \(Int(targetSleepInHours))h")
+            Spacer()
+            Text("\(Int(maxScale))h")
+        }
+        .font(.caption)
+        .foregroundStyle(Color.theme.secondaryText)
+    }
+    
 }
 
 // MARK: - Preview
