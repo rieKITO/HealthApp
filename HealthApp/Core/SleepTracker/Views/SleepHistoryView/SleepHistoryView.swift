@@ -28,9 +28,9 @@ struct SleepHistoryView: View {
     // MARK: - Body
     
     var body: some View {
+        sleepHistoryViewHeader
+            .padding(.top)
         ScrollView {
-            sleepHistoryViewHeader
-                .padding(.top)
             SleepWeeklyOverviewView(viewModel: viewModel)
             sleepRecordsView
         }
