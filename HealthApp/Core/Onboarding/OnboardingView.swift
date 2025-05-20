@@ -44,6 +44,12 @@ struct OnboardingView: View {
     @State
     private var height: Double = 130
     
+    @State
+    private var goal: String = ""
+    
+    @State
+    private var activityLevel: String = ""
+    
     // for the alert
     @State
     private var alertTitle: String = ""
@@ -67,6 +73,12 @@ struct OnboardingView: View {
     
     @AppStorage("height")
     private var currentUserHeight: Double?
+    
+    @AppStorage("goal")
+    private var userGoal: String?
+    
+    @AppStorage("activityLevel")
+    private var userActivityLevel: String?
     
     @AppStorage("signed_in")
     private var currentUserSignedIn: Bool = false
@@ -95,6 +107,12 @@ struct OnboardingView: View {
                 case 5:
                     addHeightSection
                         .transition(transition)
+                case 6:
+                    addActivityLevelSection
+                        .transition(transition)
+                case 7:
+                    addGoalSection
+                        .transition(transition)
                 default:
                     Text("Add name")
                 }
@@ -117,7 +135,7 @@ private extension OnboardingView {
     
     private var bottomButton: some View {
         Text(onBoardingState == 0 ? "SIGN UP" :
-            onBoardingState == 5 ? "FINISH" :
+            onBoardingState == 7 ? "FINISH" :
             "NEXT"
         )
             .font(.headline)
@@ -308,6 +326,64 @@ private extension OnboardingView {
         .padding(30)
     }
     
+    private var addActivityLevelSection: some View {
+        VStack(spacing: 20) {
+            Spacer()
+            Text("What's activity level")
+                .font(.largeTitle)
+                .fontWeight(.semibold)
+                .foregroundStyle(Color.theme.accent)
+            Menu {
+                Picker(selection: $activityLevel, label: Text("")) {
+                    Text("Sedentary").tag("Sedentary")
+                    Text("Light").tag("Light")
+                    Text("Moderate").tag("Moderate")
+                    Text("Active").tag("Active")
+                    Text("Very Active").tag("VeryActive")
+                }
+            } label: {
+                Text(activityLevel.count > 1 ? activityLevel : "Select an activity level")
+                    .font(.headline)
+                    .foregroundColor(Color.theme.background)
+                    .frame(height: 55)
+                    .frame(maxWidth: .infinity)
+                    .background(Color.theme.accent)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+            }
+            Spacer()
+            Spacer()
+        }
+        .padding(30)
+    }
+    
+    private var addGoalSection: some View {
+        VStack(spacing: 20) {
+            Spacer()
+            Text("What's your goal?")
+                .font(.largeTitle)
+                .fontWeight(.semibold)
+                .foregroundStyle(Color.theme.accent)
+            Menu {
+                Picker(selection: $goal, label: Text("")) {
+                    Text("Lose").tag("Lose")
+                    Text("Maintain").tag("Maintain")
+                    Text("Gain").tag("Gain")
+                }
+            } label: {
+                Text(goal.count > 1 ? goal : "Select a goal")
+                    .font(.headline)
+                    .foregroundColor(Color.theme.background)
+                    .frame(height: 55)
+                    .frame(maxWidth: .infinity)
+                    .background(Color.theme.accent)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+            }
+            Spacer()
+            Spacer()
+        }
+        .padding(30)
+    }
+    
 }
 
 // MARK: - Private Methods
@@ -332,12 +408,22 @@ private extension OnboardingView {
                 showAlert(title: "Please enter a valid weight between 30kg and 200kg")
                 return
             }
+        case 6:
+            guard activityLevel.count > 1 else {
+                showAlert(title: "Please select an activity level before moving forward!")
+                return
+            }
+        case 7:
+            guard goal.count > 1 else {
+                showAlert(title: "Please select a goal before moving forward!")
+                return
+            }
         default:
             break
         }
         
         // Go to next section
-        if onBoardingState == 5 {
+        if onBoardingState == 7 {
             signIn()
         } else {
             withAnimation(.spring()) {
@@ -352,6 +438,8 @@ private extension OnboardingView {
         currentUserGender = gender
         currentUserWeight = weight
         currentUserHeight = height
+        userGoal = goal
+        userActivityLevel = activityLevel
         withAnimation(.spring()) {
             currentUserSignedIn = true
         }

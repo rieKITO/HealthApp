@@ -55,11 +55,11 @@ class NutritionViewModel {
     
     @ObservationIgnored
     @AppStorage("goal")
-    private var userGoal: String = "maintain"
+    private var userGoal: String?
     
     @ObservationIgnored
     @AppStorage("activityLevel")
-    private var activityLevel: String = "moderate"
+    private var userActivityLevel: String?
     
     // MARK: - Computed Properties
     
@@ -117,7 +117,9 @@ class NutritionViewModel {
             let weight = currentUserWeight,
             let height = currentUserHeight,
             let age = currentUserAge,
-            let gender = userGender
+            let gender = userGender,
+            let activityLevel = userActivityLevel,
+            let goal = userGoal
         else { return 2000 }
         
         // 1. Calculate BMR
@@ -140,7 +142,7 @@ class NutritionViewModel {
         let tdee = bmr * multiplier
         
         // 3. Adjust for goal
-        switch userGoal.lowercased() {
+        switch goal.lowercased() {
         case "lose": return tdee - 500
         case "gain": return tdee + 500
         default: return tdee
