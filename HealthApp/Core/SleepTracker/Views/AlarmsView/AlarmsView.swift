@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-import SwiftUI
-
 struct AlarmsView: View {
     
     // MARK: - Environment
@@ -33,25 +31,31 @@ struct AlarmsView: View {
         alarmsViewHeader
             .padding(.top)
         ScrollView {
-            VStack {
-                alarmsViewUnderheader
-                ForEach($viewModel.alarms) { $alarm in
-                    AlarmRowView(alarm: $alarm)
-                        .onTapGesture {
-                            selectedAlarm = alarm
-                            isShowingAlarmEditor = true
+            alarmsViewUnderheader
+                .padding(.horizontal)
+            LazyVStack(spacing: 0) {
+                ForEach($viewModel.alarms, id: \.id) { $alarm in
+                    SwipeToDeleteRowView {
+                        AlarmRowView(alarm: $alarm)
+                    } deleteAction: {
+                        withAnimation(.easeInOut(duration: 0.4)) {
+                            viewModel.deleteAlarm(alarm: alarm)
                         }
+                    } onTap: {
+                        selectedAlarm = alarm
+                        isShowingAlarmEditor = true
+                    }
                 }
-                Spacer()
+                .padding(.vertical, 25)
             }
-            .padding(.horizontal)
-        }
-        .safeAreaInset(edge: .bottom, alignment: .center) {
-            addAlarmButton
         }
         .sheet(isPresented: $isShowingAlarmEditor) {
             AlarmEditorView(viewModel: viewModel, alarm: $selectedAlarm)
         }
+        .safeAreaInset(edge: .bottom, alignment: .center) {
+            addAlarmButton
+        }
+        .animation(.easeInOut(duration: 0.4), value: viewModel.alarms)
     }
     
 }

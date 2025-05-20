@@ -17,7 +17,7 @@ enum Weekday: String, CaseIterable, Codable {
     case saturday
 }
 
-struct Alarm: Identifiable, Codable {
+struct Alarm: Identifiable, Codable, Equatable {
     var id: UUID = UUID()
     var time: Date
     var isEnabled: Bool
