@@ -48,7 +48,7 @@ struct RecipeSearchView: View {
                             .padding()
                     } else {
                         ForEach(recipesToShow) { recipe in
-                            RecipeRowView(recipe: recipe)
+                            RecipeRowView(recipe: recipe, showAddButton: true)
                                 .padding(.horizontal)
                                 .padding(.bottom, 8)
                         }

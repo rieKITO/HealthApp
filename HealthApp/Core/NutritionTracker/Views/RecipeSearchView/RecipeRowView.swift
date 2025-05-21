@@ -23,25 +23,29 @@ struct RecipeRowView: View {
     
     var recipe: Recipe
     
+    var showAddButton: Bool
+    
     // MARK: - Body
     
     var body: some View {
         VStack {
             recipeHeader
             recipeInfo
-            Button {
-                showMealPicker.toggle()
-            } label: {
-                addButtonLabel
-            }
-            .confirmationDialog("Select Meal", isPresented: $showMealPicker) {
-                ForEach(viewModel.todayMealIntakes) { intake in
-                    Button(intake.type) {
-                        viewModel.addRecipeToMealIntake(recipe, to: intake)
+            if showAddButton {
+                Button {
+                    showMealPicker.toggle()
+                } label: {
+                    addButtonLabel
+                }
+                
+                .confirmationDialog("Select Meal", isPresented: $showMealPicker) {
+                    ForEach(viewModel.todayMealIntakes) { intake in
+                        Button(intake.type) {
+                            viewModel.addRecipeToMealIntake(recipe, to: intake)
+                        }
                     }
                 }
             }
-
         }
         .padding()
         .background(
@@ -119,10 +123,12 @@ private extension RecipeRowView {
 // MARK: - Preview
 
 #Preview("Light Mode") {
-    RecipeRowView(recipe: DeveloperPreview.instance.recipe)
+    RecipeRowView(recipe: DeveloperPreview.instance.recipe, showAddButton: true)
+        .environment(DeveloperPreview.instance.nutritionViewModel)
 }
 
 #Preview("Dark Mode") {
-    RecipeRowView(recipe: DeveloperPreview.instance.recipe)
+    RecipeRowView(recipe: DeveloperPreview.instance.recipe, showAddButton: true)
+        .environment(DeveloperPreview.instance.nutritionViewModel)
         .preferredColorScheme(.dark)
 }
