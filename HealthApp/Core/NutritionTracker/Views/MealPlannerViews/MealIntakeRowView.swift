@@ -61,10 +61,12 @@ private extension MealIntakeRowView {
     
     private var mealIntakeRowHeader: some View {
             HStack {
-                Image(systemName: "fork.knife")
-                    .foregroundStyle(Color.theme.accentGreen)
-                    .frame(width: 40, height: 40)
-                    .background(Circle().fill(Color.theme.mutedGreen))
+                CircleButtonView(
+                    iconName: "fork.knife",
+                    shadowColor: Color.theme.background,
+                    circleColor: Color.theme.mutedGreen
+                )
+                .foregroundStyle(Color.theme.accentGreen)
                 VStack(alignment: .leading) {
                     Text(mealIntake.type)
                         .font(.headline)
