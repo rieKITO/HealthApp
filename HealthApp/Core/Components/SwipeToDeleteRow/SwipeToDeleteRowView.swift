@@ -26,8 +26,6 @@ struct SwipeToDeleteRowView<Content: View>: View {
     
     private let buttonPadding: CGFloat = 8
     
-    private let rowHeight: CGFloat = 60
-    
     // MARK: - Init Properties
     
     let content: Content
@@ -57,19 +55,14 @@ struct SwipeToDeleteRowView<Content: View>: View {
                 deleteButton
                     .opacity(isDeleting ? 0 : (isDeleteButtonVisible ? 1 : 0))
             }
-            .frame(height: rowHeight)
             .background(Color.theme.background)
             content
-                .frame(height: rowHeight)
                 .padding(.trailing, isDeleteButtonVisible ? (buttonPadding + 10) : 0)
                 .background(Color.theme.background)
                 .offset(x: offset)
                 .gesture(dragGesture)
                 .simultaneousGesture(tapGesture)
         }
-        .frame(height: rowHeight)
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
         .opacity(isDeleting ? 0 : 1)
         .scaleEffect(isDeleting ? 0.95 : 1)
         .animation(.easeInOut(duration: 0.35), value: isDeleting)
