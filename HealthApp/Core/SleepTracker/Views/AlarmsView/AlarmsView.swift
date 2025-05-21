@@ -32,8 +32,9 @@ struct AlarmsView: View {
             .padding(.top)
         ScrollView {
             alarmsViewUnderheader
+                .padding(.top, 10)
                 .padding(.horizontal)
-            LazyVStack(spacing: 0) {
+            LazyVStack {
                 ForEach($viewModel.alarms, id: \.id) { $alarm in
                     SwipeToDeleteRowView {
                         AlarmRowView(alarm: $alarm)
@@ -46,7 +47,8 @@ struct AlarmsView: View {
                         isShowingAlarmEditor = true
                     }
                 }
-                .padding(.vertical, 25)
+                .padding(.top, 10)
+                .padding(.horizontal)
             }
         }
         .sheet(isPresented: $isShowingAlarmEditor) {
