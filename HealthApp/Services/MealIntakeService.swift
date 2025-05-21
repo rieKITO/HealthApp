@@ -56,16 +56,18 @@ class MealIntakeService {
     }
     
     func addRecipeToMealIntake(mealIntakeId: UUID, recipeId: Int) {
-        guard let entity = fetchEntity(by: mealIntakeId) else { return }
-        
-        var ids = (try? JSONDecoder().decode([Int].self, from: entity.recipeIdsData ?? Data())) ?? []
-        
-        guard !ids.contains(recipeId) else { return }
-        ids.append(recipeId)
-        entity.recipeIdsData = try? JSONEncoder().encode(ids)
-        
-        saveContext()
-        fetchMealIntakes()
+        updateRecipeIds(for: mealIntakeId) { ids in
+            guard !ids.contains(recipeId) else { return ids }
+            var updated = ids
+            updated.append(recipeId)
+            return updated
+        }
+    }
+    
+    func removeRecipeFromMealIntake(mealIntakeId: UUID, recipeId: Int) {
+        updateRecipeIds(for: mealIntakeId) { ids in
+            ids.filter { $0 != recipeId }
+        }
     }
 
     func ensureTodayMealIntakesExist() {
@@ -101,6 +103,18 @@ class MealIntakeService {
         } catch {
             print("meal intake loading error: \(error.localizedDescription)")
         }
+    }
+    
+    private func updateRecipeIds(for mealIntakeId: UUID, update: ([Int]) -> [Int]) {
+        guard let entity = fetchEntity(by: mealIntakeId) else { return }
+
+        let currentIds = (try? JSONDecoder().decode([Int].self, from: entity.recipeIdsData ?? Data())) ?? []
+        let newIds = update(currentIds)
+
+        entity.recipeIdsData = try? JSONEncoder().encode(newIds)
+
+        saveContext()
+        fetchMealIntakes()
     }
     
     private func fetchEntity(by id: UUID) -> MealIntakeEntity? {

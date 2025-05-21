@@ -180,6 +180,10 @@ class NutritionViewModel {
         mealIntakeService.addRecipeToMealIntake(mealIntakeId: intake.id, recipeId: recipe.id)
     }
     
+    func removeRecipeFromMealIntake(_ recipe: Recipe, from intake: MealIntake) {
+        mealIntakeService.removeRecipeFromMealIntake(mealIntakeId: intake.id, recipeId: recipe.id)
+    }
+    
     func loadMoreRecipesIfNeeded(currentItem: Recipe?) {
         recipeDataService.loadMoreRecipesIfNeeded(currentItem: currentItem)
     }
