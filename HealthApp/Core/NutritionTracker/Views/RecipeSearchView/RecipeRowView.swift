@@ -123,12 +123,18 @@ private extension RecipeRowView {
 // MARK: - Preview
 
 #Preview("Light Mode") {
-    RecipeRowView(recipe: DeveloperPreview.instance.recipe, showAddButton: true)
-        .environment(DeveloperPreview.instance.nutritionViewModel)
+    Group {
+        RecipeRowView(recipe: DeveloperPreview.instance.recipe, showAddButton: true)
+        RecipeRowView(recipe: DeveloperPreview.instance.recipe, showAddButton: false)
+    }
+    .environment(DeveloperPreview.instance.nutritionViewModel)
 }
 
 #Preview("Dark Mode") {
-    RecipeRowView(recipe: DeveloperPreview.instance.recipe, showAddButton: true)
-        .environment(DeveloperPreview.instance.nutritionViewModel)
-        .preferredColorScheme(.dark)
+    Group {
+        RecipeRowView(recipe: DeveloperPreview.instance.recipe, showAddButton: true)
+        RecipeRowView(recipe: DeveloperPreview.instance.recipe, showAddButton: false)
+    }
+    .environment(DeveloperPreview.instance.nutritionViewModel)
+    .preferredColorScheme(.dark)
 }
