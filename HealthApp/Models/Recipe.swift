@@ -16,7 +16,7 @@ struct Recipe: Identifiable, Codable {
     let carbs: Double
     
     var caloriesText: String {
-        String(format: "%.0f cal", calories)
+        String(format: "%.0f kcal", calories)
     }
     
     var macrosText: String {
