@@ -164,6 +164,7 @@ class NutritionViewModel {
                 switch result {
                 case .success(let recipes):
                     self?.searchedRecipes = recipes
+                    self?.allRecipes.append(contentsOf: recipes)
                 case .failure(let error):
                     print("Search error: \(error.localizedDescription)")
                     self?.searchedRecipes = []
