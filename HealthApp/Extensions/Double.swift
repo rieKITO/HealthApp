@@ -17,4 +17,12 @@ extension Double {
         return String(format: "%.1f", self)
     }
     
+    /// Converts a Double into int string representation
+    /// ```
+    /// Convert 1.2345 to "1"
+    /// ```
+    func asNumberToIntString() -> String {
+        return String(format: "%.0f", self)
+    }
+    
 }

@@ -220,6 +220,24 @@ class NutritionViewModel {
         return getLastWeekCalories().min(by: { $0.calories < $1.calories })?.calories ?? 0
     }
     
+    func getDailyProtein() -> Double {
+        todayMealIntakes
+            .flatMap { getMealIntakeRecipes(for: $0) }
+            .reduce(0) { $0 + $1.protein }
+    }
+    
+    func getDailyCarbs() -> Double {
+        todayMealIntakes
+            .flatMap { getMealIntakeRecipes(for: $0) }
+            .reduce(0) { $0 + $1.carbs }
+    }
+
+    func getDailyFat() -> Double {
+        todayMealIntakes
+            .flatMap { getMealIntakeRecipes(for: $0) }
+            .reduce(0) { $0 + $1.fat }
+    }
+    
 }
 
 struct DailyCalories {

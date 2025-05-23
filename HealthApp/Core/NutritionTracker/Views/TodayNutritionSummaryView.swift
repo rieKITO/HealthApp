@@ -45,6 +45,7 @@ struct TodayNutritionSummaryView: View {
             )
             .padding(.top, 4)
             scaleLabelsView
+            dailyNutriesntsView
         }
         .padding()
         .background(
@@ -83,16 +84,40 @@ private extension TodayNutritionSummaryView {
     }
     
     private var scaleLabelsView: some View {
-        HStack(spacing: 8) {
-            Text("0 kcal")
-            Spacer()
+        ZStack {
             Text("\(Int(viewModel.targetCalories)) kcal")
                 .bold()
-            Spacer()
-            Text("\(Int(maxCalories)) kcal")
+            HStack {
+                Text("0 kcal")
+                Spacer()
+                Text("\(Int(maxCalories)) kcal")
+            }
+            
         }
         .font(.caption)
         .foregroundStyle(Color.theme.secondaryText)
+    }
+    
+    private var dailyNutriesntsView: some View {
+        ZStack {
+            nutrientColumn(title: "Carbs", value: "\(viewModel.getDailyCarbs().asNumberString())g")
+            HStack {
+                nutrientColumn(title: "Protein", value: "\(viewModel.getDailyProtein().asNumberString())g")
+                Spacer()
+                nutrientColumn(title: "Fats", value: "\(viewModel.getDailyFat().asNumberString())g")
+            }
+        }
+        .padding(.horizontal, 20)
+    }
+    
+    private func nutrientColumn(title: String, value: String) -> some View {
+        VStack {
+            Text(title)
+                .foregroundStyle(Color.theme.secondaryText)
+                .font(.subheadline)
+            Text(value)
+                .font(.headline)
+        }
     }
     
 }
