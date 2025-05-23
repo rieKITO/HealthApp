@@ -35,12 +35,24 @@ struct MealIntakeRowView: View {
             mealIntakeRowHeader
             Group {
                 recipesList
-                NavigationLink {
-                    RecipeSearchView()
-                        .environment(viewModel)
-                        .navigationBarBackButtonHidden(true)
-                } label: {
-                    addFoodItemButton
+                HStack {
+                    NavigationLink {
+                        RecipeSearchView(forMealIntake: mealIntake)
+                            .environment(viewModel)
+                            .navigationBarBackButtonHidden(true)
+                    } label: {
+                        addFoodItemButton
+                    }
+                    Spacer()
+                    NavigationLink {
+                        MealIntakeInfoView(mealIntake: mealIntake)
+                            .environment(viewModel)
+                            .navigationBarBackButtonHidden(true)
+                    } label: {
+                        Image(systemName: "arrow.right")
+                            .font(.headline)
+                            .foregroundStyle(Color.theme.accent)
+                    }
                 }
             }
             .padding(.leading, 50)

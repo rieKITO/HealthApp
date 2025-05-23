@@ -36,21 +36,7 @@ struct MealIntakeInfoView: View {
     var body: some View {
         mealIntakeInfoViewHeader
             .padding(.top)
-        ScrollView {
-            LazyVStack {
-                ForEach(recipes, id: \.id) { recipe in
-                    SwipeToDeleteRowView {
-                        RecipeRowView(recipe: recipe, showAddButton: false)
-                    } deleteAction: {
-                        withAnimation(.easeInOut(duration: 0.4)) {
-                            viewModel.removeRecipeFromMealIntake(recipe, from: mealIntake)
-                        }
-                    } onTap: { }
-                }
-                .padding(.top, 10)
-                .padding(.horizontal)
-            }
-        }
+        mealIntakeRecipes
         .safeAreaInset(edge: .bottom, alignment: .center) {
             addRecipeButton
         }
@@ -94,9 +80,27 @@ private extension MealIntakeInfoView {
         .foregroundStyle(Color.theme.accentGreen)
     }
     
+    private var mealIntakeRecipes: some View {
+        ScrollView {
+            LazyVStack {
+                ForEach(recipes, id: \.id) { recipe in
+                    SwipeToDeleteRowView {
+                        RecipeRowView(recipe: recipe, showAddButton: false)
+                    } deleteAction: {
+                        withAnimation(.easeInOut(duration: 0.4)) {
+                            viewModel.removeRecipeFromMealIntake(recipe, from: mealIntake)
+                        }
+                    } onTap: { }
+                }
+                .padding(.top, 10)
+                .padding(.horizontal)
+            }
+        }
+    }
+    
     private var addRecipeButton: some View {
         NavigationLink {
-            RecipeSearchView()
+            RecipeSearchView(forMealIntake: mealIntake)
                 .environment(viewModel)
                 .navigationBarBackButtonHidden(true)
         } label: {

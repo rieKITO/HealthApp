@@ -25,6 +25,8 @@ struct RecipeRowView: View {
     
     var showAddButton: Bool
     
+    var mealIntake: MealIntake?
+    
     // MARK: - Body
     
     var body: some View {
@@ -32,16 +34,23 @@ struct RecipeRowView: View {
             recipeHeader
             recipeInfo
             if showAddButton {
-                Button {
-                    showMealPicker.toggle()
-                } label: {
-                    addButtonLabel
-                }
-                
-                .confirmationDialog("Select Meal", isPresented: $showMealPicker) {
-                    ForEach(viewModel.todayMealIntakes) { intake in
-                        Button(intake.type) {
-                            viewModel.addRecipeToMealIntake(recipe, to: intake)
+                if let mealIntake {
+                    addButtonLabel(label: mealIntake.type)
+                        .onTapGesture {
+                            viewModel.addRecipeToMealIntake(recipe, to: mealIntake)
+                        }
+                } else {
+                    Button {
+                        showMealPicker.toggle()
+                    } label: {
+                        addButtonLabel(label: "Today")
+                    }
+                    
+                    .confirmationDialog("Select Meal", isPresented: $showMealPicker) {
+                        ForEach(viewModel.todayMealIntakes) { intake in
+                            Button(intake.type) {
+                                viewModel.addRecipeToMealIntake(recipe, to: intake)
+                            }
                         }
                     }
                 }
@@ -106,8 +115,8 @@ private extension RecipeRowView {
         )
     }
     
-    private var addButtonLabel: some View {
-        Text("Add to Today")
+    private func addButtonLabel(label: String) -> some View {
+        return Text("Add to \(label)")
             .foregroundStyle(Color.theme.accentGreen)
             .bold()
             .frame(maxWidth: .infinity)

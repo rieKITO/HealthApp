@@ -22,6 +22,8 @@ struct RecipeSearchView: View {
     @State
     private var textFieldText: String = ""
     
+    var forMealIntake: MealIntake?
+    
     // MARK: - Body
     
     var body: some View {
@@ -48,7 +50,7 @@ struct RecipeSearchView: View {
                             .padding()
                     } else {
                         ForEach(recipesToShow) { recipe in
-                            RecipeRowView(recipe: recipe, showAddButton: true)
+                            RecipeRowView(recipe: recipe, showAddButton: true, mealIntake: forMealIntake ?? nil)
                                 .padding(.horizontal)
                                 .padding(.bottom, 8)
                         }
