@@ -31,7 +31,7 @@ struct MealIntakeSimpleRowView: View {
     // MARK: - Body
     
     var body: some View {
-        HStack {
+        HStack(spacing: 10) {
             Image(systemName: "fork.knife")
                 .foregroundStyle(Color.theme.accentGreen)
                 .frame(width: 40, height: 40)
@@ -39,8 +39,17 @@ struct MealIntakeSimpleRowView: View {
             Text(mealIntake.type)
                 .font(.headline)
             Spacer()
-            Text("\(totalCalories, specifier: "%.0f") cal")
+            Text("\(totalCalories, specifier: "%.0f") kcal")
                 .font(.headline)
+            NavigationLink {
+                MealIntakeInfoView(mealIntake: mealIntake)
+                    .environment(viewModel)
+                    .navigationBarBackButtonHidden(true)
+            } label: {
+                Image(systemName: "arrow.right")
+                    .font(.headline)
+                    .foregroundStyle(Color.theme.accent)
+            }
         }
         .padding()
         .background(
