@@ -69,7 +69,7 @@ private extension RecipeSearchView {
 
     private var recipeSearchHeader: some View {
         ZStack {
-            Text("Food Database")
+            Text("Recipe Search")
                 .font(.headline)
                 .fontWeight(.heavy)
                 .frame(maxWidth: .infinity, alignment: .center)
