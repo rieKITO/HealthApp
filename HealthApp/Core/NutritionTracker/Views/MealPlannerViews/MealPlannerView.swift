@@ -24,6 +24,7 @@ struct MealPlannerView: View {
             .padding(.top)
         ScrollView {
             LazyVStack {
+                SimpleDailyNutritionSummaryView()
                 mealIntakes
                 Spacer()
             }
