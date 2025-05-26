@@ -320,27 +320,18 @@ class NutritionViewModel {
     }
     
     func refreshAllRecommendations() {
-        // Собираем ID всех рецептов за сегодня
         let recipeIds = Set(todayMealIntakes.flatMap { $0.recipeIds })
-
-        // Получаем рецепты
         let todayRecipes = allRecipes.filter { recipeIds.contains($0.id) }
-
-        // 1. Получаем рекомендации по цели
         getGoalBasedRecommendations()
-
-        // 2. Получаем рекомендации по балансировке нутриентов
         getNutritionBalanceRecommendations()
-
-        // 3. Получаем похожие рецепты (суммарно)
-        let uniqueIds = Array(recipeIds.prefix(5)) // не перегружать API
+        let uniqueIds = Array(recipeIds.prefix(5))
         for id in uniqueIds {
             recipeDataService.getSimilarRecipes(recipeId: id) { [weak self] result in
                 DispatchQueue.main.async {
                     switch result {
                     case .success(let recipes):
                         self?.similarRecipes.append(contentsOf: recipes)
-                        self?.similarRecipes = Array(Set(self?.similarRecipes ?? [])) // Удаляем дубликаты
+                        self?.similarRecipes = Array(Set(self?.similarRecipes ?? []))
                     case .failure(let error):
                         print("Error getting similar recipes: \(error.localizedDescription)")
                     }
