@@ -45,7 +45,6 @@ struct RecipeRowView: View {
                     } label: {
                         addButtonLabel(label: "Today")
                     }
-                    
                     .confirmationDialog("Select Meal", isPresented: $showMealPicker) {
                         ForEach(viewModel.todayMealIntakes) { intake in
                             Button(intake.type) {

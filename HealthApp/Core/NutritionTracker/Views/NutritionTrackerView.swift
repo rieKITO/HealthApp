@@ -39,9 +39,11 @@ struct NutritionTrackerView: View {
                 .padding(.horizontal)
                 HStack {
                     NavigationLink {
-                        
+                        RecommendationsView()
+                            .environment(viewModel)
+                            .navigationBarBackButtonHidden(true)
                     } label: {
-                        waterPlannerLabel
+                        recomendationsLabel
                     }
                     NavigationLink {
                         NutritionHistoryView()
@@ -114,7 +116,7 @@ private extension NutritionTrackerView {
             }
     }
     
-    private var waterPlannerLabel: some View {
+    private var recomendationsLabel: some View {
         RoundedRectangle(cornerRadius: 10)
             .stroke(Color.theme.accent.opacity(0.5), lineWidth: 2)
             .fill(Color.theme.background)
@@ -123,15 +125,15 @@ private extension NutritionTrackerView {
             .overlay {
                 VStack(alignment: .leading) {
                     HStack {
-                        Image(systemName: "mug.fill")
+                        Image(systemName: "list.triangle")
                             .font(.title2)
                             .frame(width: 30, height: 30)
-                        Text("Water Planner")
+                        Text("Personal Recs")
                             .font(.headline)
                         Spacer()
                     }
                     .foregroundStyle(Color.theme.accentGreen)
-                    Text("Track your hidration")
+                    Text("Watch your daily recomendations")
                         .multilineTextAlignment(.leading)
                         .foregroundStyle(Color.theme.secondaryText)
                     Spacer()

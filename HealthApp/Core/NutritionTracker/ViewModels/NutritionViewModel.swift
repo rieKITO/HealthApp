@@ -22,6 +22,12 @@ class NutritionViewModel {
     
     var todayMealIntakes: [MealIntake] = []
     
+    var similarRecipes: [Recipe] = []
+    
+    var goalBasedRecommendations: [Recipe] = []
+    
+    var nutritionBalanceRecommendations: [Recipe] = []
+    
     var isLoading: Bool = false
     
     // MARK: - Services
@@ -31,6 +37,9 @@ class NutritionViewModel {
     
     @ObservationIgnored
     private let mealIntakeService = MealIntakeService()
+    
+    @ObservationIgnored
+    private var lastRecommendationUpdate: Date?
     
     @ObservationIgnored
     private var cancellables = Set<AnyCancellable>()
@@ -95,16 +104,15 @@ class NutritionViewModel {
         mealIntakeService.$mealIntakes
             .receive(on: DispatchQueue.main)
             .sink { [weak self] intakes in
-                self?.allMealIntakes = intakes
-            }
-            .store(in: &cancellables)
-        
-        mealIntakeService.$mealIntakes
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] intakes in
+                guard let self = self else { return }
+                self.allMealIntakes = intakes
+
                 let today = Calendar.current.startOfDay(for: Date())
-                self?.todayMealIntakes = intakes.filter {
-                    Calendar.current.isDate($0.date, inSameDayAs: today)
+                let todayIntakes = intakes.filter { Calendar.current.isDate($0.date, inSameDayAs: today) }
+                self.todayMealIntakes = todayIntakes
+
+                if shouldUpdateRecommendations() {
+                    refreshAllRecommendations()
                 }
             }
             .store(in: &cancellables)
@@ -150,6 +158,19 @@ class NutritionViewModel {
         
     }
     
+    private func shouldUpdateRecommendations() -> Bool {
+        guard let lastUpdate = lastRecommendationUpdate else {
+            lastRecommendationUpdate = Date()
+            return true
+        }
+        let interval = Date().timeIntervalSince(lastUpdate)
+        if interval > 60 {
+            lastRecommendationUpdate = Date()
+            return true
+        }
+        return false
+    }
+    
     // MARK: - Public Methods
     
     func searchRecipes(by title: String) {
@@ -164,7 +185,12 @@ class NutritionViewModel {
                 switch result {
                 case .success(let recipes):
                     self?.searchedRecipes = recipes
-                    self?.allRecipes.append(contentsOf: recipes)
+
+                    let existingIDs = Set(self?.allRecipes.map { $0.id } ?? [])
+                    let newRecipes = recipes.filter { !existingIDs.contains($0.id) }
+
+                    self?.allRecipes.append(contentsOf: newRecipes)
+                    
                 case .failure(let error):
                     print("Search error: \(error.localizedDescription)")
                     self?.searchedRecipes = []
@@ -236,6 +262,91 @@ class NutritionViewModel {
         todayMealIntakes
             .flatMap { getMealIntakeRecipes(for: $0) }
             .reduce(0) { $0 + $1.fat }
+    }
+    
+    func getSimilarRecipes(for recipe: Recipe) {
+        isLoading = true
+        recipeDataService.getSimilarRecipes(recipeId: recipe.id) { [weak self] result in
+            DispatchQueue.main.async {
+                self?.isLoading = false
+                switch result {
+                case .success(let recipes):
+                    self?.similarRecipes = recipes
+                case .failure(let error):
+                    print("Error getting similar recipes: \(error.localizedDescription)")
+                    self?.similarRecipes = []
+                }
+            }
+        }
+    }
+    
+    func getGoalBasedRecommendations() {
+        guard let userGoal = userGoal else { return }
+        isLoading = true
+        recipeDataService.getRecommendationsBasedOnGoals(userGoal: userGoal) { [weak self] (result: Result<[Recipe], Error>) in
+            DispatchQueue.main.async {
+                self?.isLoading = false
+                switch result {
+                case .success(let recipes):
+                    self?.goalBasedRecommendations = recipes
+                case .failure(let error):
+                    print("Error getting goal-based recommendations: \(error.localizedDescription)")
+                    self?.goalBasedRecommendations = []
+                }
+            }
+        }
+    }
+    
+    func getNutritionBalanceRecommendations() {
+        let currentNutrition = (
+            protein: getDailyProtein(),
+            carbs: getDailyCarbs(),
+            fat: getDailyFat()
+        )
+        
+        isLoading = true
+        recipeDataService.getRecipesToBalanceNutrition(currentNutrition: currentNutrition) { [weak self] result in
+            DispatchQueue.main.async {
+                self?.isLoading = false
+                switch result {
+                case .success(let recipes):
+                    self?.nutritionBalanceRecommendations = recipes
+                case .failure(let error):
+                    print("Error getting nutrition balance recommendations: \(error.localizedDescription)")
+                    self?.nutritionBalanceRecommendations = []
+                }
+            }
+        }
+    }
+    
+    func refreshAllRecommendations() {
+        // Собираем ID всех рецептов за сегодня
+        let recipeIds = Set(todayMealIntakes.flatMap { $0.recipeIds })
+
+        // Получаем рецепты
+        let todayRecipes = allRecipes.filter { recipeIds.contains($0.id) }
+
+        // 1. Получаем рекомендации по цели
+        getGoalBasedRecommendations()
+
+        // 2. Получаем рекомендации по балансировке нутриентов
+        getNutritionBalanceRecommendations()
+
+        // 3. Получаем похожие рецепты (суммарно)
+        let uniqueIds = Array(recipeIds.prefix(5)) // не перегружать API
+        for id in uniqueIds {
+            recipeDataService.getSimilarRecipes(recipeId: id) { [weak self] result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(let recipes):
+                        self?.similarRecipes.append(contentsOf: recipes)
+                        self?.similarRecipes = Array(Set(self?.similarRecipes ?? [])) // Удаляем дубликаты
+                    case .failure(let error):
+                        print("Error getting similar recipes: \(error.localizedDescription)")
+                    }
+                }
+            }
+        }
     }
     
 }
