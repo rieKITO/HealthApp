@@ -11,17 +11,27 @@ import SwiftUI
 
 @Observable
 class AlarmViewModel {
-
+    
+    // MARK: - Published Properties
+    
+    var alarms: [Alarm] = []
+    
+    // MARK: - Private Properties
+    
+    @ObservationIgnored
     private let alarmService = AlarmService()
     
+    @ObservationIgnored
     private var cancellables = Set<AnyCancellable>()
 
-    var alarms: [Alarm] = []
+    // MARK: - Init
 
     init() {
         addSubscribers()
     }
-
+    
+    // MARK: - Subscribers
+    
     private func addSubscribers() {
         alarmService.$allAlarms
             .receive(on: DispatchQueue.main)
@@ -30,14 +40,9 @@ class AlarmViewModel {
             }
             .store(in: &cancellables)
     }
-
-    private func updateAlarm(updatedAlarm: Alarm) {
-        if let index = alarms.firstIndex(where: { $0.id == updatedAlarm.id }) {
-            alarms[index] = updatedAlarm
-            alarmService.saveAlarms(alarms)
-        }
-    }
-
+    
+    // MARK: - Public Methods
+    
     func createOrUpdateAlarm(existingAlarm: Alarm?, time: Date, description: String, repeatDays: Set<Weekday>) -> Alarm {
         var alarmToReturn: Alarm
 
@@ -67,4 +72,14 @@ class AlarmViewModel {
     func deleteAlarm(alarm: Alarm) {
         alarmService.deleteAlarm(alarm: alarm)
     }
+    
+    // MARK: - Private Methods
+
+    private func updateAlarm(updatedAlarm: Alarm) {
+        if let index = alarms.firstIndex(where: { $0.id == updatedAlarm.id }) {
+            alarms[index] = updatedAlarm
+            alarmService.saveAlarms(alarms)
+        }
+    }
+    
 }

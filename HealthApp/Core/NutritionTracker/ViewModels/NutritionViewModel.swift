@@ -30,6 +30,22 @@ class NutritionViewModel {
     
     var isLoading: Bool = false
     
+    // MARK: - Published Computed Properties
+    
+    var todayCalories: Double {
+        todayMealIntakes.reduce(0) { total, intake in
+            total + getMealIntakeRecipes(for: intake).reduce(0) { $0 + $1.calories }
+        }
+    }
+    
+    var targetCalories: Double {
+        calculateDailyCalories()
+    }
+    
+    var caloriesRatio: Double {
+        todayCalories / targetCalories
+    }
+    
     // MARK: - Services
     
     @ObservationIgnored
@@ -39,10 +55,12 @@ class NutritionViewModel {
     private let mealIntakeService = MealIntakeService()
     
     @ObservationIgnored
-    private var lastRecommendationUpdate: Date?
+    private var cancellables = Set<AnyCancellable>()
+    
+    // MARK: - Private Properties
     
     @ObservationIgnored
-    private var cancellables = Set<AnyCancellable>()
+    private var lastRecommendationUpdate: Date?
     
     // MARK: - User Data
     
@@ -69,22 +87,6 @@ class NutritionViewModel {
     @ObservationIgnored
     @AppStorage("activityLevel")
     private var userActivityLevel: String?
-    
-    // MARK: - Computed Properties
-    
-    var todayCalories: Double {
-        todayMealIntakes.reduce(0) { total, intake in
-            total + getMealIntakeRecipes(for: intake).reduce(0) { $0 + $1.calories }
-        }
-    }
-    
-    var targetCalories: Double {
-        calculateDailyCalories()
-    }
-    
-    var caloriesRatio: Double {
-        todayCalories / targetCalories
-    }
     
     // MARK: - Init
     
@@ -118,60 +120,11 @@ class NutritionViewModel {
             .store(in: &cancellables)
     }
     
-    // MARK: - Private Methods
-    
-    private func calculateDailyCalories() -> Double {
-        guard
-            let weight = currentUserWeight,
-            let height = currentUserHeight,
-            let age = currentUserAge,
-            let gender = userGender,
-            let activityLevel = userActivityLevel,
-            let goal = userGoal
-        else { return 2000 }
-        
-        // 1. Calculate BMR
-        let bmr = gender.lowercased() == "male" ?
-            10 * weight + 6.25 * height - 5 * Double(age) + 5 :
-            10 * weight + 6.25 * height - 5 * Double(age) - 161
-        
-        // 2. Apply activity multiplier
-        let multiplier: Double = {
-            switch activityLevel.lowercased() {
-            case "sedentary": return 1.2
-            case "light": return 1.375
-            case "moderate": return 1.55
-            case "active": return 1.725
-            case "veryactive": return 1.9
-            default: return 1.55
-            }
-        }()
-        
-        let tdee = bmr * multiplier
-        
-        // 3. Adjust for goal
-        switch goal.lowercased() {
-        case "lose": return tdee - 500
-        case "gain": return tdee + 500
-        default: return tdee
-        }
-        
-    }
-    
-    private func shouldUpdateRecommendations() -> Bool {
-        guard let lastUpdate = lastRecommendationUpdate else {
-            lastRecommendationUpdate = Date()
-            return true
-        }
-        let interval = Date().timeIntervalSince(lastUpdate)
-        if interval > 60 {
-            lastRecommendationUpdate = Date()
-            return true
-        }
-        return false
-    }
-    
-    // MARK: - Public Methods
+}
+
+// MARK: - Recipes Methods
+
+extension NutritionViewModel {
     
     func searchRecipes(by title: String) {
         guard !title.isEmpty else {
@@ -214,6 +167,14 @@ class NutritionViewModel {
     func loadMoreRecipesIfNeeded(currentItem: Recipe?) {
         recipeDataService.loadMoreRecipesIfNeeded(currentItem: currentItem)
     }
+    
+}
+
+// MARK: - Nutrients Methods
+
+extension NutritionViewModel {
+    
+    // Public Methods
     
     func getLastWeekCalories() -> [DailyCalories] {
         let calendar = Calendar.current
@@ -263,6 +224,53 @@ class NutritionViewModel {
             .flatMap { getMealIntakeRecipes(for: $0) }
             .reduce(0) { $0 + $1.fat }
     }
+    
+    // Private Methods
+    
+    private func calculateDailyCalories() -> Double {
+        guard
+            let weight = currentUserWeight,
+            let height = currentUserHeight,
+            let age = currentUserAge,
+            let gender = userGender,
+            let activityLevel = userActivityLevel,
+            let goal = userGoal
+        else { return 2000 }
+        
+        // 1. Calculate BMR
+        let bmr = gender.lowercased() == "male" ?
+            10 * weight + 6.25 * height - 5 * Double(age) + 5 :
+            10 * weight + 6.25 * height - 5 * Double(age) - 161
+        
+        // 2. Apply activity multiplier
+        let multiplier: Double = {
+            switch activityLevel.lowercased() {
+            case "sedentary": return 1.2
+            case "light": return 1.375
+            case "moderate": return 1.55
+            case "active": return 1.725
+            case "veryactive": return 1.9
+            default: return 1.55
+            }
+        }()
+        
+        let tdee = bmr * multiplier
+        
+        // 3. Adjust for goal
+        switch goal.lowercased() {
+        case "lose": return tdee - 500
+        case "gain": return tdee + 500
+        default: return tdee
+        }
+    }
+    
+}
+
+// MARK: - Recommendation Methods
+
+extension NutritionViewModel {
+    
+    // Public Methods
     
     func getSimilarRecipes(for recipe: Recipe) {
         isLoading = true
@@ -321,7 +329,6 @@ class NutritionViewModel {
     
     func refreshAllRecommendations() {
         let recipeIds = Set(todayMealIntakes.flatMap { $0.recipeIds })
-        let todayRecipes = allRecipes.filter { recipeIds.contains($0.id) }
         getGoalBasedRecommendations()
         getNutritionBalanceRecommendations()
         let uniqueIds = Array(recipeIds.prefix(5))
@@ -338,6 +345,21 @@ class NutritionViewModel {
                 }
             }
         }
+    }
+    
+    // Private Methods
+    
+    private func shouldUpdateRecommendations() -> Bool {
+        guard let lastUpdate = lastRecommendationUpdate else {
+            lastRecommendationUpdate = Date()
+            return true
+        }
+        let interval = Date().timeIntervalSince(lastUpdate)
+        if interval > 60 {
+            lastRecommendationUpdate = Date()
+            return true
+        }
+        return false
     }
     
 }

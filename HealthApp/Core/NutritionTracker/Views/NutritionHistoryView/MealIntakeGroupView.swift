@@ -9,9 +9,9 @@ import SwiftUI
 
 struct MealIntakeGroupView: View {
     
-    // MARK: - Public Properties
+    // MARK: - Init Properties
     
-    var mealIntakes: [MealIntake]
+    let mealIntakes: [MealIntake]
     
     // MARK: - Private Properties
     

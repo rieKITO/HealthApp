@@ -86,13 +86,10 @@ struct AlarmEditorView: View {
     struct Preview: View {
         
         @State
-        private var viewModel = AlarmViewModel()
-        
-        @State
         private var alarm: Alarm? = DeveloperPreview.instance.alarm
         
         var body: some View {
-            AlarmEditorView(viewModel: viewModel, alarm: $alarm)
+            AlarmEditorView(viewModel: DeveloperPreview.instance.alarmViewModel, alarm: $alarm)
         }
         
     }
@@ -106,13 +103,10 @@ struct AlarmEditorView: View {
     struct Preview: View {
         
         @State
-        private var viewModel = AlarmViewModel()
-        
-        @State
         private var alarm: Alarm? = DeveloperPreview.instance.alarm
         
         var body: some View {
-            AlarmEditorView(viewModel: viewModel, alarm: $alarm)
+            AlarmEditorView(viewModel: DeveloperPreview.instance.alarmViewModel, alarm: $alarm)
                 .preferredColorScheme(.dark)
         }
         

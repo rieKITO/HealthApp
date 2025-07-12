@@ -10,7 +10,7 @@ import SwiftUI
 
 struct NutritionWeeklyOverviewView: View {
     
-    // MARK: - Environment
+    // MARK: - View Model
     
     @Environment(NutritionViewModel.self)
     private var viewModel

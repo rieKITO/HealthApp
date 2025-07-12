@@ -9,6 +9,13 @@ import Foundation
 import Combine
 
 class SleepDataService {
+    
+    // MARK: - Published
+    
+    @Published
+    var allSleepRecords: [SleepData] = []
+    
+    // MARK: - Private Properties
 
     private let fileManager = LocalFileManager.instance
     
@@ -16,17 +23,14 @@ class SleepDataService {
     
     private let fileName = "SleepData.json"
     
-    @Published
-    var allSleepRecords: [SleepData] = []
+    // MARK: - Init
 
     init() {
         loadSleepRecords()
     }
-
-    private func loadSleepRecords() {
-        allSleepRecords = fileManager.loadData(folderName: folderName, fileName: fileName)
-    }
-
+    
+    // MARK: - Public Methods
+    
     func saveSleepRecords(_ records: [SleepData]) {
         fileManager.saveData(records: records, folderName: folderName, fileName: fileName)
         allSleepRecords = records
@@ -42,4 +46,11 @@ class SleepDataService {
         records.append(record)
         saveSleepRecords(records)
     }
+    
+    // MARK: - Private Methods
+
+    private func loadSleepRecords() {
+        allSleepRecords = fileManager.loadData(folderName: folderName, fileName: fileName)
+    }
+    
 }

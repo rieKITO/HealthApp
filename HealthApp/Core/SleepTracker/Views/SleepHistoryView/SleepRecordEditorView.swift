@@ -9,15 +9,15 @@ import SwiftUI
 
 struct SleepRecordEditorView: View {
     
-    // MARK: - Environment
-    
-    @Environment(\.dismiss)
-    private var dismiss
-    
     // MARK: - View Model
     
     @Bindable
     var viewModel: SleepTrackerViewModel
+    
+    // MARK: - Environment
+    
+    @Environment(\.dismiss)
+    private var dismiss
     
     // MARK: - Binding
     
@@ -32,7 +32,7 @@ struct SleepRecordEditorView: View {
     @State
     private var endSleepTime: Date = Date()
     
-    // MARK: - Properties
+    // MARK: - Private Properties
     
     let startingDatePickerDate: Date = Calendar.autoupdatingCurrent.date(byAdding: .day, value: -7, to: Date()) ?? Date()
     
@@ -42,7 +42,7 @@ struct SleepRecordEditorView: View {
         self.viewModel = viewModel
         self._record = record
         
-        let values = viewModel.getSleepRecordValues(from: record.wrappedValue)
+        let values = self.viewModel.getSleepRecordValues(from: self._record.wrappedValue)
         
         _startSleepTime = State(initialValue: values.startTime)
         _endSleepTime = State(initialValue: values.endTime ?? Date())
@@ -75,13 +75,10 @@ struct SleepRecordEditorView: View {
     struct Preview: View {
         
         @State
-        private var viewModel = SleepTrackerViewModel()
-        
-        @State
         private var record: SleepData? = DeveloperPreview.instance.sleepRecord
         
         var body: some View {
-            SleepRecordEditorView(viewModel: viewModel, record: $record)
+            SleepRecordEditorView(viewModel: DeveloperPreview.instance.sleepTrackerViewModel, record: $record)
         }
         
     }
@@ -95,13 +92,10 @@ struct SleepRecordEditorView: View {
     struct Preview: View {
         
         @State
-        private var viewModel = SleepTrackerViewModel()
-        
-        @State
         private var record: SleepData? = DeveloperPreview.instance.sleepRecord
         
         var body: some View {
-            SleepRecordEditorView(viewModel: viewModel, record: $record)
+            SleepRecordEditorView(viewModel: DeveloperPreview.instance.sleepTrackerViewModel, record: $record)
                 .preferredColorScheme(.dark)
         }
         

@@ -24,7 +24,10 @@ struct OnboardingView: View {
      3 - Add gender
      4 - Add weight
      5 - Add height
+     6 - Add activity
+     7 - Add goal
     */
+    
     @State
     private var onBoardingState: Int = 0
     
@@ -57,7 +60,7 @@ struct OnboardingView: View {
     @State
     private var showAlert: Bool = false
     
-    // MARK: - App Storage
+    // MARK: - App Storage Properties
     
     @AppStorage("name")
     private var currentUserName: String?
@@ -129,7 +132,7 @@ struct OnboardingView: View {
     }
 }
 
-// MARK: - Private Components
+// MARK: - Subviews
 
 private extension OnboardingView {
     

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SleepTrackerView: View {
     
-    // MARK: - State
+    // MARK: - View Model
     
     @State
     private var viewModel = SleepTrackerViewModel()

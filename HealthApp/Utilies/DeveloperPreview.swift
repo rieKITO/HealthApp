@@ -13,6 +13,10 @@ struct DeveloperPreview {
     
     let nutritionViewModel = NutritionViewModel()
     
+    let alarmViewModel = AlarmViewModel()
+    
+    let sleepTrackerViewModel = SleepTrackerViewModel()
+    
     let alarm: Alarm = Alarm(time: Date(), isEnabled: true, description: "Weekday wake up", repeatDays: [.monday, .friday, .sunday])
     
     let sleepRecord: SleepData = SleepData(startTime: Date(), endTime: Date())

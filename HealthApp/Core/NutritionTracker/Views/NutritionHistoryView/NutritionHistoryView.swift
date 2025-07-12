@@ -17,7 +17,7 @@ struct NutritionHistoryView: View {
     @Environment(\.dismiss)
     private var dismiss
     
-    // MARK: - Private Properties
+    // MARK: - Computed Properties
     
     private var groupedMealIntakes: [Date: [MealIntake]] {
         Dictionary(grouping: viewModel.allMealIntakes) { intake in

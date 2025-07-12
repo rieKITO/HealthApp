@@ -9,6 +9,8 @@ import SwiftUI
 
 struct StatisticsView: View {
     
+    // MARK: - View Model
+    
     @State
     var sleepViewModel = SleepTrackerViewModel()
     

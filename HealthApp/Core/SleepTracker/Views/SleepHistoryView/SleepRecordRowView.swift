@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SleepRecordRowView: View {
     
-    var record: SleepData
+    let record: SleepData
     
     // MARK: - Body
     
@@ -31,12 +31,6 @@ struct SleepRecordRowView: View {
                 .font(.caption)
                 .foregroundStyle(Color.theme.secondaryText)
             Text("\(DateFormatterHelper.formatDuration(record.duration ?? 0))")
-            Spacer()
-            Image(systemName: "waveform.path.ecg")
-                .font(.caption)
-                .foregroundStyle(Color.theme.secondaryText)
-            Text("\(Int.random(in: 70...95))%") // Симуляция качества сна
-                .foregroundColor(Color.theme.accentBlue)
         }
         .padding()
         .background(
@@ -49,34 +43,10 @@ struct SleepRecordRowView: View {
 // MARK: - Preview
 
 #Preview("Light Mode") {
-    
-    struct Preview: View {
-        
-        @State
-        private var sleepRecord = DeveloperPreview.instance.sleepRecord
-        
-        var body: some View {
-            SleepRecordRowView(record: sleepRecord)
-        }
-    }
-    
-    return Preview()
-    
+    SleepRecordRowView(record: DeveloperPreview.instance.sleepRecord)
 }
 
 #Preview("Dark Mode") {
-    
-    struct Preview: View {
-        
-        @State
-        private var sleepRecord = DeveloperPreview.instance.sleepRecord
-        
-        var body: some View {
-            SleepRecordRowView(record: sleepRecord)
-                .preferredColorScheme(.dark)
-        }
-    }
-    
-    return Preview()
-    
+    SleepRecordRowView(record: DeveloperPreview.instance.sleepRecord)
+        .preferredColorScheme(.dark)
 }

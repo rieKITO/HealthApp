@@ -14,7 +14,7 @@ struct ProfileView: View {
     @Environment(\.dismiss)
     private var dismiss
     
-    // MARK: - App Storage
+    // MARK: - App Storage Properties
     
     @AppStorage("name")
     private var currentUserName: String?
@@ -182,7 +182,12 @@ private extension ProfileView {
 
 // MARK: - Preview
 
-#Preview {
+#Preview("Light Mode") {
     ProfileView()
+}
+
+#Preview("Dark Mode") {
+    ProfileView()
+        .preferredColorScheme(.dark)
 }
 

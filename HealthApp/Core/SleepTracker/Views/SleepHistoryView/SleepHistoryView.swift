@@ -9,6 +9,11 @@ import SwiftUI
 
 struct SleepHistoryView: View {
     
+    // MARK: - View Model
+    
+    @Bindable
+    var viewModel: SleepTrackerViewModel
+    
     // MARK: - Environment
     
     @Environment(\.dismiss)
@@ -16,14 +21,11 @@ struct SleepHistoryView: View {
     
     // MARK: - State
     
-    @Bindable
-    var viewModel: SleepTrackerViewModel
-    
     @State
     private var isShowingSleepRecordEditor: Bool = false
     
     @State
-    private var selectedRecord: SleepData? = nil
+    private var selectedRecord: SleepData?
     
     // MARK: - Body
     
@@ -78,8 +80,8 @@ private extension SleepHistoryView {
             ForEach(viewModel.sleepRecords.sorted(by: { $0.startTime > $1.startTime })) { record in
                 SleepRecordRowView(record: record)
                     .onTapGesture {
-                        isShowingSleepRecordEditor = true
                         selectedRecord = record
+                        isShowingSleepRecordEditor = true
                     }
             }
         }
@@ -108,34 +110,10 @@ private extension SleepHistoryView {
 // MARK: - Preview
 
 #Preview("Light Mode") {
-    
-    struct Preview: View {
-        
-        @State
-        private var viewModel = SleepTrackerViewModel()
-        
-        var body: some View {
-            SleepHistoryView(viewModel: viewModel)
-        }
-    }
-    
-    return Preview()
-    
+    SleepHistoryView(viewModel: DeveloperPreview.instance.sleepTrackerViewModel)
 }
 
 #Preview("Dark Mode") {
-    
-    struct Preview: View {
-        
-        @State
-        private var viewModel = SleepTrackerViewModel()
-        
-        var body: some View {
-            SleepHistoryView(viewModel: viewModel)
-                .preferredColorScheme(.dark)
-        }
-    }
-    
-    return Preview()
-    
+    SleepHistoryView(viewModel: DeveloperPreview.instance.sleepTrackerViewModel)
+        .preferredColorScheme(.dark)
 }

@@ -9,6 +9,14 @@ import SwiftUI
 
 struct RecipeRowView: View {
     
+    // MARK: - Init Properties
+    
+    let recipe: Recipe
+    
+    let showAddButton: Bool
+    
+    var mealIntake: MealIntake?
+    
     // MARK: - View Model
     
     @Environment(NutritionViewModel.self)
@@ -18,14 +26,6 @@ struct RecipeRowView: View {
     
     @State
     private var showMealPicker = false
-    
-    // MARK: - Properties
-    
-    var recipe: Recipe
-    
-    var showAddButton: Bool
-    
-    var mealIntake: MealIntake?
     
     // MARK: - Body
     

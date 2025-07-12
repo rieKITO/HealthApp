@@ -9,20 +9,28 @@ import Foundation
 import Combine
 
 class AlarmService {
+    
+    // MARK: - Published
+    
+    @Published
+    var allAlarms: [Alarm] = []
+    
+    // MARK: - Private Properties
 
     private let fileManager = LocalFileManager.instance
 
     private let folderName = "AlarmData"
     
     private let fileName = "AlarmData.json"
-
-    @Published
-    var allAlarms: [Alarm] = []
+    
+    // MARK: - Init
 
     init() {
         loadAlarms()
     }
 
+    // MARK: - Public Methods
+    
     func loadAlarms() {
         allAlarms = fileManager.loadData(folderName: folderName, fileName: fileName)
     }

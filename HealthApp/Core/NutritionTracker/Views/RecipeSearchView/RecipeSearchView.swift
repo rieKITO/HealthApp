@@ -9,6 +9,10 @@ import SwiftUI
 
 struct RecipeSearchView: View {
     
+    // MARK: - Init Properties
+    
+    var forMealIntake: MealIntake?
+    
     // MARK: - Environment
     
     @Environment(\.dismiss)
@@ -21,8 +25,6 @@ struct RecipeSearchView: View {
     
     @State
     private var textFieldText: String = ""
-    
-    var forMealIntake: MealIntake?
     
     // MARK: - Body
     

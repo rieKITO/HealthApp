@@ -14,7 +14,7 @@ struct TodaySleepSummaryView: View {
     @Bindable
     var viewModel: SleepTrackerViewModel
     
-    // MARK: - Properties
+    // MARK: - Computed Properties
 
     private var lastSleepRecord: SleepData? {
         let today = Calendar.current.startOfDay(for: Date())
@@ -41,7 +41,9 @@ struct TodaySleepSummaryView: View {
             return Color.theme.accentGreen
         }
     }
-
+    
+    // MARK: - Private Properties
+    
     private let targetSleepInHours: Double = 8.0
     
     private let maxScale: Double = 12.0
@@ -119,34 +121,10 @@ private extension TodaySleepSummaryView {
 // MARK: - Preview
 
 #Preview("Light Mode") {
-    
-    struct Preview: View {
-        
-        @State
-        private var viewModel = SleepTrackerViewModel()
-        
-        var body: some View {
-            TodaySleepSummaryView(viewModel: viewModel)
-        }
-    }
-    
-    return Preview()
-    
+    TodaySleepSummaryView(viewModel: DeveloperPreview.instance.sleepTrackerViewModel)
 }
 
 #Preview("Dark Mode") {
-    
-    struct Preview: View {
-        
-        @State
-        private var viewModel = SleepTrackerViewModel()
-        
-        var body: some View {
-            TodaySleepSummaryView(viewModel: viewModel)
-                .preferredColorScheme(.dark)
-        }
-    }
-    
-    return Preview()
-    
+    TodaySleepSummaryView(viewModel: DeveloperPreview.instance.sleepTrackerViewModel)
+        .preferredColorScheme(.dark)
 }

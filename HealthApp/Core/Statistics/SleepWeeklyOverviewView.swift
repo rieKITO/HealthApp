@@ -76,34 +76,10 @@ private extension SleepWeeklyOverviewView {
 // MARK: - Preview
 
 #Preview("Light Mode") {
-    
-    struct Preview: View {
-        
-        @State
-        private var viewModel = SleepTrackerViewModel()
-        
-        var body: some View {
-            SleepWeeklyOverviewView(viewModel: viewModel)
-        }
-    }
-    
-    return Preview()
-    
+    SleepWeeklyOverviewView(viewModel: DeveloperPreview.instance.sleepTrackerViewModel)
 }
 
 #Preview("Dark Mode") {
-    
-    struct Preview: View {
-        
-        @State
-        private var viewModel = SleepTrackerViewModel()
-        
-        var body: some View {
-            SleepWeeklyOverviewView(viewModel: viewModel)
-                .preferredColorScheme(.dark)
-        }
-    }
-    
-    return Preview()
-    
+    SleepWeeklyOverviewView(viewModel: DeveloperPreview.instance.sleepTrackerViewModel)
+        .preferredColorScheme(.dark)
 }

@@ -15,10 +15,14 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
     
     private var audioPlayer: AVAudioPlayer?
     
+    // MARK: - Init
+    
     override init() {
         super.init()
         UNUserNotificationCenter.current().delegate = self
     }
+    
+    // MARK: - Public Methods
     
     func requestAuthorization() {
         let options: UNAuthorizationOptions = [.alert, .sound, .badge]
@@ -30,29 +34,6 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
                 print("⛔️ Notifications not allowed")
             }
         }
-    }
-    
-    private func setupNotificationCategories() {
-        let snoozeAction = UNNotificationAction(
-            identifier: "SNOOZE_ACTION",
-            title: "Snooze (9 min)",
-            options: [.foreground]
-        )
-
-        let stopAction = UNNotificationAction(
-            identifier: "STOP_ACTION",
-            title: "Stop",
-            options: [.foreground]
-        )
-
-        let category = UNNotificationCategory(
-            identifier: "ALARM_CATEGORY",
-            actions: [snoozeAction, stopAction],
-            intentIdentifiers: [],
-            options: []
-        )
-
-        UNUserNotificationCenter.current().setNotificationCategories([category])
     }
     
     func scheduleNotification(for alarm: Alarm) {
@@ -87,6 +68,37 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         }
     }
     
+    func cancelNotification(for alarm: Alarm) {
+        let identifiers = alarm.repeatDays.map { "ALARM_\(alarm.id.uuidString)_\($0.rawValue)" }
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: identifiers)
+        print("🚫 Notifications removed for alarm clock \(alarm.id)")
+    }
+    
+    // MARK: - Private Methods
+    
+    private func setupNotificationCategories() {
+        let snoozeAction = UNNotificationAction(
+            identifier: "SNOOZE_ACTION",
+            title: "Snooze (9 min)",
+            options: [.foreground]
+        )
+
+        let stopAction = UNNotificationAction(
+            identifier: "STOP_ACTION",
+            title: "Stop",
+            options: [.foreground]
+        )
+
+        let category = UNNotificationCategory(
+            identifier: "ALARM_CATEGORY",
+            actions: [snoozeAction, stopAction],
+            intentIdentifiers: [],
+            options: []
+        )
+
+        UNUserNotificationCenter.current().setNotificationCategories([category])
+    }
+    
     private func weekdayIndex(_ weekday: Weekday) -> Int {
         switch weekday {
         case .sunday: return 1
@@ -99,12 +111,6 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         }
     }
 
-    func cancelNotification(for alarm: Alarm) {
-        let identifiers = alarm.repeatDays.map { "ALARM_\(alarm.id.uuidString)_\($0.rawValue)" }
-        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: identifiers)
-        print("🚫 Notifications removed for alarm clock \(alarm.id)")
-    }
-
     private func createNotificationContent(for alarm: Alarm) -> UNMutableNotificationContent {
         let content = UNMutableNotificationContent()
         content.title = "⏰ Wake up!"
@@ -113,4 +119,5 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         content.categoryIdentifier = "ALARM_CATEGORY"
         return content
     }
+    
 }

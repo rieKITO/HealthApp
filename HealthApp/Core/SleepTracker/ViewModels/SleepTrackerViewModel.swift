@@ -11,19 +11,32 @@ import Combine
 @Observable
 class SleepTrackerViewModel {
     
-    private let sleepDataService = SleepDataService()
-    
-    private var cancellables = Set<AnyCancellable>()
-    
-    private var sleepStartTime: Date?
+    // MARK: - Published Properties
     
     var isSleeping = false
 
     var sleepRecords: [SleepData] = []
+    
+    // MARK: - Services
+    
+    @ObservationIgnored
+    private let sleepDataService = SleepDataService()
+    
+    @ObservationIgnored
+    private var cancellables = Set<AnyCancellable>()
+    
+    // MARK: - Private Properties
+    
+    @ObservationIgnored
+    private var sleepStartTime: Date?
 
+    // MARK: - Init
+    
     init() {
         addSubscribers()
     }
+    
+    // MARK: - Subscribers
     
     private func addSubscribers() {
         sleepDataService.$allSleepRecords
@@ -33,6 +46,12 @@ class SleepTrackerViewModel {
             }
             .store(in: &cancellables)
     }
+
+}
+
+// MARK: - Sleep Tracker Counter Methods
+
+extension SleepTrackerViewModel {
     
     func startSleep() {
         guard !isSleeping else { return }
@@ -47,18 +66,19 @@ class SleepTrackerViewModel {
         sleepDataService.addSleepRecord(record)
     }
     
+}
+
+// MARK: - Sleep Record Methods
+
+extension SleepTrackerViewModel {
+    
+    // Public Methods
+    
     func getSleepRecordValues(from sleepRecord: SleepData?) -> (startTime: Date, endTime: Date?) {
         guard let sleepRecord = sleepRecord else {
             return (Date(), Date())
         }
         return (sleepRecord.startTime, sleepRecord.endTime)
-    }
-    
-    private func updateSleepRecord(updatedRecord: SleepData) {
-        if let index = sleepRecords.firstIndex(where: { $0.id == updatedRecord.id }) {
-            sleepRecords[index] = updatedRecord
-            sleepDataService.saveSleepRecords(sleepRecords)
-        }
     }
     
     func createOrUpdateSleepRecord(existingSleepRecord: SleepData?, startTime: Date, endTime: Date) -> SleepData {
@@ -78,6 +98,23 @@ class SleepTrackerViewModel {
         return sleepRecordToReturn
     }
     
+    // Private Methods
+    
+    private func updateSleepRecord(updatedRecord: SleepData) {
+        if let index = sleepRecords.firstIndex(where: { $0.id == updatedRecord.id }) {
+            sleepRecords[index] = updatedRecord
+            sleepDataService.saveSleepRecords(sleepRecords)
+        }
+    }
+    
+}
+
+// MARK: - Get Sleep Values Methods
+
+extension SleepTrackerViewModel {
+    
+    // Public Methods
+    
     func getDailySleepTimeInterval() -> TimeInterval {
         getTotalSleep(for: 1)
     }
@@ -88,22 +125,6 @@ class SleepTrackerViewModel {
     
     func getMonthlySleepTimeInterval() -> TimeInterval {
         getTotalSleep(for: 30)
-    }
-    
-    private func getTotalSleep(for days: Int) -> TimeInterval {
-        let calendar = Calendar.current
-        let now = Date()
-        let startDate = calendar.date(byAdding: .day, value: -days + 1, to: calendar.startOfDay(for: now)) ?? now
-
-        return sleepRecords
-            .filter { record in
-                if let end = record.endTime {
-                    return end >= startDate && end <= now
-                }
-                return false
-            }
-            .compactMap { $0.duration }
-            .reduce(0, +)
     }
     
     func getAverageSleep() -> Double {
@@ -137,5 +158,23 @@ class SleepTrackerViewModel {
             return (date, totalHours)
         }
     }
+    
+    // Private Methods
+    
+    private func getTotalSleep(for days: Int) -> TimeInterval {
+        let calendar = Calendar.current
+        let now = Date()
+        let startDate = calendar.date(byAdding: .day, value: -days + 1, to: calendar.startOfDay(for: now)) ?? now
 
+        return sleepRecords
+            .filter { record in
+                if let end = record.endTime {
+                    return end >= startDate && end <= now
+                }
+                return false
+            }
+            .compactMap { $0.duration }
+            .reduce(0, +)
+    }
+    
 }

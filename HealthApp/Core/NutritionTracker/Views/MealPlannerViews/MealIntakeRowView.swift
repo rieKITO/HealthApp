@@ -9,22 +9,22 @@ import SwiftUI
 
 struct MealIntakeRowView: View {
     
+    // MARK: - Init Properties
+    
+    var mealIntake: MealIntake
+    
     // MARK: - View Model
     
     @Environment(NutritionViewModel.self)
     private var viewModel
     
-    // MARK: - Private Properties
+    // MARK: - Computed Properties
     
     private var totalCalories: Double {
         recipes.reduce(0) { $0 + $1.calories }
     }
     
-    // MARK: - Public Properties
-    
-    var mealIntake: MealIntake
-    
-    var recipes: [Recipe] {
+    private var recipes: [Recipe] {
         viewModel.getMealIntakeRecipes(for: mealIntake)
     }
     
