@@ -10,7 +10,7 @@ import Combine
 import SwiftUI
 
 @Observable
-class NutritionViewModel {
+final class NutritionViewModel {
     
     // MARK: - Published Properties
     

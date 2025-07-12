@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-class AlarmService {
+final class AlarmService {
     
     // MARK: - Published
     

@@ -7,7 +7,7 @@
 
 import Foundation
 
-class DateFormatterHelper {
+final class DateFormatterHelper {
     
     static func formatDuration(_ duration: TimeInterval) -> String {
         let hours = Int(duration) / 3600

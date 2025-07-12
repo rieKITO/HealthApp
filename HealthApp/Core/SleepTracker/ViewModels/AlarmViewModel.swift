@@ -10,7 +10,7 @@ import Combine
 import SwiftUI
 
 @Observable
-class AlarmViewModel {
+final class AlarmViewModel {
     
     // MARK: - Published Properties
     

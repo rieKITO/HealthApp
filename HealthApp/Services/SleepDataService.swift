@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-class SleepDataService {
+final class SleepDataService {
     
     // MARK: - Published
     

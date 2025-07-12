@@ -9,7 +9,7 @@ import Foundation
 import CoreData
 import Combine
 
-class MealIntakeService {
+final class MealIntakeService {
     
     // MARK: - Published
     

@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-class RecipeDataService {
+final class RecipeDataService {
     
     // MARK: - Published
     

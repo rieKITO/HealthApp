@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 @Observable
-class SleepTrackerViewModel {
+final class SleepTrackerViewModel {
     
     // MARK: - Published Properties
     

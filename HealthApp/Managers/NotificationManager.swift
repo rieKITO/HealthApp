@@ -9,7 +9,7 @@ import Foundation
 import UserNotifications
 import AVFoundation
 
-class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
+final class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
     
     static let instance = NotificationManager()
     
