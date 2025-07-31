@@ -26,11 +26,11 @@ final class MealIntakeService {
     
     init() {
         container = NSPersistentContainer(name: "NutritionContainer")
-            container.loadPersistentStores { _, error in
-                if let error = error {
-                    print("CoreData loading error: \(error.localizedDescription)")
-                }
+        container.loadPersistentStores { _, error in
+            if let error = error {
+                print("CoreData loading error: \(error.localizedDescription)")
             }
+        }
         fetchMealIntakes()
         ensureTodayMealIntakesExist()
     }
@@ -45,14 +45,12 @@ final class MealIntakeService {
         intake.recipeIdsData = try? JSONEncoder().encode(recipeIds)
         
         saveContext()
-        fetchMealIntakes()
     }
     
     func deleteMealIntake(_ intake: MealIntake) {
         guard let entity = fetchEntity(by: intake.id) else { return }
         container.viewContext.delete(entity)
         saveContext()
-        fetchMealIntakes()
     }
     
     func addRecipeToMealIntake(mealIntakeId: UUID, recipeId: Int) {
